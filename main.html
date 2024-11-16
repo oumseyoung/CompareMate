@@ -9,19 +9,32 @@
   <body>
     <header>
       <img src="icon.png" alt="CM" />
-      <a hrf=""><img src="Bell.png" alt="알람" /></a>
+      <img src="Bell.png" alt="알람" onclick="toggleLayer()" />
+      <div id="layer" class="hidden">
+        <!--이부분 수정해야합니다!!!!!-->
+        <ul>
+          <li><a href="#">알람</a></li>
+          <li><a href="#">알람</a></li>
+          <li><a href="#">알람</a></li>
+          <li><a href="#">알람</a></li>
+          <li><a href="#">알람</a></li>
+        </ul>
+      </div>
+
       <a href="main.html">게시판</a>
       <a href="mypage.html">마이페이지</a>
       <a href="first.html">로그아웃</a>
     </header>
-    <aside div="side">
+    <aside class="side">
       <!--이부분 수정해야합니다!!!!!-->
-      <p>카테고리</p>
-      <a href="main.html">전체 게시글</a>
-      <a href="###.html">전자제품</a>
-      <a href="###.html">전자제품</a>
-      <a href="###.html">전자제품</a>
-      <a href="category.html">기타</a>
+      <ul>
+        <li>카테고리</li>
+        <li><a href="main.html">전체 게시글</a></li>
+        <li><a href="###.html">전자제품</a></li>
+        <li><a href="###.html">전자제품</a></li>
+        <li><a href="###.html">전자제품</a></li>
+        <li><a href="category.html">기타</a></li>
+      </ul>
     </aside>
     <div class="content">
       <h2>Compare Mate</h2>
@@ -34,5 +47,6 @@
         <input type="submit" id="submit" value="로그인" />
       </div>
     </div>
+    <script src="main.js"></script>
   </body>
 </html>

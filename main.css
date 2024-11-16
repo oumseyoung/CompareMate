@@ -1,0 +1,41 @@
+body {
+  height: 5000px;
+}
+
+.hidden {
+  display: none;
+}
+
+#layer {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 10px;
+  width: 200px;
+  position: absolute;
+  top: 50px; /* 이미지 위치에 따라 조정 가능 */
+  left: 0; /* 이미지 위치에 따라 조정 가능 */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.side {
+  position: fixed; /* 스크롤을 따라오도록 지정 */
+  background-color: #ddead1;
+  width: var(--side-bar-width);
+  min-height: var(
+    --side-bar-height
+  ); /* 사이드바의 높이를 전체 화면 높이의 90%로 지정 */
+  margin-top: calc(
+    (100vh - var(--side-bar-height)) / 2
+  ); /* 사이드바 위와 아래의 마진을 동일하게 지정 */
+}
+body,
+ul,
+li {
+  margin: 0;
+  padding: 0;
+  list-style: none; /* 해당 태그의 list-style을 none으로 하는 것으로 ●을 제거한다 */
+}
+
+a {
+  color: inherit; /* 부모 엘리먼트의 값을 물려받는다 */
+  text-decoration: none; /* 해당 태그의 text-decoration 속성을 none 값으로 하는 것으로 밑줄을 제거한다 */
+}
