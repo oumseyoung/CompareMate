@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="write.css">
+  <title>게시글 작성</title>
+</head>
+
+<body>
+  <header>
+    <div class="header-container">
+      <img src="icon.png" alt="CM" id="CM" />
+      <div class="up">
+        <img src="Bell.png" alt="알람" id="bell" onclick="toggleLayer()" />
+        <div id="layer" class="hidden">
+          <ul>
+            <li><a href="#">알람 1</a></li>
+            <li><a href="#">알람 2</a></li>
+            <li><a href="#">알람 3</a></li>
+          </ul>
+        </div>
+        <a href="main.html">게시판</a>
+        <a href="mypage.html">마이페이지</a>
+        <a href="first.html">로그아웃</a>
+      </div>
+    </div>
+    <hr class="custom-hr">
+  </header>
+
+  <main>
+    <h1>게시글 작성</h1>
+    <form>
+      <div class="form-group-inline">
+        <label for="category">카테고리</label>
+        <select id="category">
+          <option>카테고리 선택</option>
+          <option>옵션 1</option>
+          <option>옵션 2</option>
+        </select>
+      </div>
+      <div class="form-group-inline">
+        <label for="title">제목</label>
+        <input type="text" id="title" placeholder="게시글 제목을 작성하세요">
+      </div>
+
+      <div class="poll">
+        <div class="poll-header">
+          <img src="vote.png" alt="투표 아이콘" />
+          <span>투표</span>
+        </div>
+        <div class="poll-layout">
+          <div class="poll-content">
+            <div class="poll-options">
+              <div class="poll-option">
+                <input type="text" placeholder="항목 입력">
+                <img src="image.png" alt="이미지 추가">
+              </div>
+              <div class="poll-option">
+                <input type="text" placeholder="항목 입력">
+                <img src="image.png" alt="이미지 추가">
+              </div>
+              <div class="poll-option">
+                <input type="text" placeholder="항목 입력">
+                <img src="image.png" alt="이미지 추가">
+              </div>
+              <button type="button" class="add-option">+ 항목 추가</button>
+            </div>
+            <label>
+              <input type="checkbox" id="multi-select"> 복수선택
+            </label>
+            <button type="button" class="add-poll">투표 추가하기</button>
+
+            <div class="poll-settings">
+              <label for="end-date">투표 종료시간 설정</label>
+              <div class="date-time-inputs">
+                <input type="date" id="end-date" value="">
+                <input type="time" id="end-time" value="">
+              </div>
+              <label><input type="checkbox"> 투표 종료 전 알림 받음</label>
+            </div>
+          </div>
+
+          <textarea placeholder="게시글을 작성하세요."></textarea>
+        </div>
+      </div>
+      <div class="form-actions">
+        <button type="button" id="cancel" class="cancel">취소</button>
+        <button type="submit" id="upload" class="upload">업로드</button>
+      </div>
+    </form>
+  </main>
+
+  <script src="script.js"></script>
+
+</body>
+
+</html>
