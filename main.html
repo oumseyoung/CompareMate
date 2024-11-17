@@ -8,27 +8,30 @@
   </head>
   <body>
     <header>
-      <img src="icon.png" alt="CM" />
-      <img src="Bell.png" alt="알람" onclick="toggleLayer()" />
-      <div id="layer" class="hidden">
-        <!--이부분 수정해야합니다!!!!!-->
-        <ul>
-          <li><a href="#">알람</a></li>
-          <li><a href="#">알람</a></li>
-          <li><a href="#">알람</a></li>
-          <li><a href="#">알람</a></li>
-          <li><a href="#">알람</a></li>
-        </ul>
-      </div>
+      <img src="icon.png" alt="CM" id="CM" />
+      <div class="up">
+        <img src="Bell.png" alt="알람" id="bell" onclick="toggleLayer()" />
+        <div id="layer" class="hidden">
+          <!--이부분 수정해야합니다!!!!!-->
+          <ul>
+            <li><a href="#">알람</a></li>
+            <li><a href="#">알람</a></li>
+            <li><a href="#">알람</a></li>
+            <li><a href="#">알람</a></li>
+            <li><a href="#">알람</a></li>
+          </ul>
+        </div>
 
-      <a href="main.html">게시판</a>
-      <a href="mypage.html">마이페이지</a>
-      <a href="first.html">로그아웃</a>
+        <a href="main.html">게시판</a>
+        <a href="mypage.html">마이페이지</a>
+        <a href="first.html">로그아웃</a>
+      </div>
+      <hr />
     </header>
     <aside class="side">
       <!--이부분 수정해야합니다!!!!!-->
       <ul>
-        <li>카테고리</li>
+        <li id="one">카테고리</li>
         <li><a href="main.html">전체 게시글</a></li>
         <li><a href="###.html">전자제품</a></li>
         <li><a href="###.html">전자제품</a></li>
