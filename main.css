@@ -5,6 +5,7 @@ body {
 .hidden {
   display: none;
 }
+
 header {
   position: fixed; /* 화면 상단에 고정 */
   top: 0;
@@ -30,19 +31,57 @@ header {
 }
 #bell {
   cursor: pointer;
+  width: 25px;
+  height: 25px;
+}
+#trash {
+  cursor: pointer;
+  position: absolute;
+  right: 20px;
+  top: 13px;
+  width: 30px;
+  height: 30px;
+  object-fit: contain;
 }
 
 #layer {
   text-align: center;
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
   padding: 5px;
-  width: 150px;
+  width: 300px;
+  height: 500px;
   position: absolute;
-  top: 30px; /* 이미지 위치에 따라 조정 가능 */
-  left: -60px; /* 이미지 위치에 따라 조정 가능 */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  top: 35px; /* 이미지 위치에 따라 조정 가능 */
+  right: 197px; /* 이미지 위치에 따라 조정 가능 */
+  background: #c7ddb5;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border-radius: 10px;
+  overflow-y: auto;
+  overflow-x: hidden; /* 좌우 스크롤 비활성화 */
+  z-index: 20;
 }
+.alert-item img {
+  width: 30px; /* 이미지 크기 */
+  height: 30px; /* 이미지 크기 */
+  border-radius: 50%; /* 원형으로 만들기 */
+  margin-left: 5px; /* 왼쪽에서 5px 떨어지게 */
+}
+
+#layer ul {
+  padding: 40px 0 0 10px;
+  margin: 0;
+}
+#layer li {
+  text-align: center;
+  width: 260px;
+  margin-top: 10px;
+  height: 60px;
+  background: white;
+  border-radius: 10px;
+}
+#layer li:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* hover 시 강조 */
+}
+
 .side {
   position: fixed; /* 화면 왼쪽에 고정 */
   top: 75px; /* 헤더 바로 아래에 위치 */
@@ -52,13 +91,19 @@ header {
   background-color: #ddead1;
   z-index: 9; /* 헤더보다 아래에 위치 */
   overflow-y: auto; /* 사이드바 내용이 길 경우 스크롤 가능 */
+  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
 }
+
 .side #one {
-  margin-top: 30px;
-  margin-left: 10px;
+  margin-top: 50px; /* 상단과의 간격 */
+  margin-left: 20px;
+  height: 50px;
+  font-size: 18px;
 }
 .side li a {
-  margin-left: 30px;
+  display: inline; /* 블록 요소로 변경 */
+  margin-left: 30px; /* 왼쪽 간격 */
+  line-height: 32px;
 }
 
 body,
@@ -72,6 +117,9 @@ li {
 a {
   color: inherit; /* 부모 엘리먼트의 값을 물려받는다 */
   text-decoration: none; /* 해당 태그의 text-decoration 속성을 none 값으로 하는 것으로 밑줄을 제거한다 */
+  display: inline;
+  margin: 0;
+  padding: 0;
 }
 
 .content {

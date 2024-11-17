@@ -13,12 +13,20 @@
         <img src="Bell.png" alt="알람" id="bell" onclick="toggleLayer()" />
         <div id="layer" class="hidden">
           <!--이부분 수정해야합니다!!!!!-->
-          <ul>
-            <li><a href="#">알람</a></li>
-            <li><a href="#">알람</a></li>
-            <li><a href="#">알람</a></li>
-            <li><a href="#">알람</a></li>
-            <li><a href="#">알람</a></li>
+          <img
+            src="trash.png"
+            alt="휴지통"
+            id="trash"
+            onclick="clearAlerts()"
+          />
+          <ul id="alert-list">
+            <a href="#">
+              <li class="alert-item">
+                <img src="circle.png" alt="프로필" /><span
+                  >투표 내용 또는 댓글 내용<br />게시글 제목</span
+                >
+              </li>
+            </a>
           </ul>
         </div>
 
@@ -31,7 +39,7 @@
     <aside class="side">
       <!--이부분 수정해야합니다!!!!!-->
       <ul>
-        <li id="one">카테고리</li>
+        <li id="one"><b>카테고리</b></li>
         <li><a href="main.html">전체 게시글</a></li>
         <li><a href="###.html">전자제품</a></li>
         <li><a href="###.html">전자제품</a></li>
