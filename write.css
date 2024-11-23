@@ -181,6 +181,12 @@ textarea {
   padding: 5px; /* 이미지 주변 여백 */
 }
 
+.poll-option img.upload-trigger {
+  width: 40px; /* 미리보기 이미지 너비 */
+  height: 40px; /* 미리보기 이미지 높이 */
+  object-fit: cover; /* 이미지가 영역을 꽉 채우도록 설정 */
+}
+
 label {
   display: flex; /* 라벨과 체크박스 가로 정렬 */
   align-items: center; /* 세로 정렬 */
@@ -197,17 +203,6 @@ button.add-option {
   width: 100%; /* 부모 요소 기준으로 버튼 너비 설정 */
   margin-top: 5px;
   margin-bottom: 10px;
-}
-
-button.add-poll {
-  background-color: #A3C585; /* 배경색(더 짙은 초록) */
-  border: 1px solid #87AB69;
-  border-radius: 10px;
-  padding: 10px 20px;
-  font-size: 18px;
-  cursor: pointer; /* 동일한 커서 */
-  width: 100%; /* 부모 요소 기준으로 버튼 너비 설정 */
-  margin-top: 10px;
 }
 
 .poll-layout {
