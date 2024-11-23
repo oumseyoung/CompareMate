@@ -39,6 +39,38 @@ header {
   cursor: pointer;
 }
 
+.form-group-inline select {
+  padding: 10px; /* 내부 여백 */
+  font-size: 14px; /* 텍스트 크기 */
+  border: 1px solid #A3C585; /* 테두리 설정 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  background-color: #ffffff; /* 배경색 */
+  appearance: none; /* 기본 브라우저 스타일 제거 */
+  cursor: pointer; /* 포인터 커서 */
+  background-image: url('CategoryDown.png'); /* 사용자 제공 이미지 */
+  background-repeat: no-repeat; /* 이미지 반복 제거 */
+  background-position: right 10px center; /* 이미지 위치 설정 */
+  background-size: 20px; /* 이미지 크기 조정 */
+  padding-right: 40px; /* 드롭다운 아이콘 공간 확보 */
+}
+
+.form-group-inline select:focus {
+  border-color: #5c8a42; /* 초록색 테두리 */
+  outline: none; /* 기본 포커스 제거 */
+  box-shadow: 0 0 5px rgba(92, 138, 66, 0.3); /* 포커스 시 그림자 */
+}
+
+#title {
+  font-size: 14px; /* 글자 크기 */
+  font-weight: normal; /* 글자 굵기 */
+  border: 1px solid #A3C585; /* 초록색 테두리 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  padding: 10px; /* 내부 여백 */
+  width: 50%; /* 입력란의 전체 너비 */
+  box-sizing: border-box; /* 테두리와 패딩을 포함한 너비 계산 */
+  background-color: #ffffff; /* 흰색 배경 */
+}
+
 #layer {
   text-align: center;
   background-color: #f9f9f9;
@@ -83,22 +115,6 @@ a {
   font-size: 14px; /* 라벨 텍스트 크기 */
   font-weight: bold; /* 라벨 강조 */
   color: #333; /* 텍스트 색상 */
-}
-
-.form-group-inline select {
-  padding: 10px; /* 내부 여백 */
-  font-size: 14px; /* 텍스트 크기 */
-  border: 1px solid #ccc; /* 테두리 설정 */
-  border-radius: 4px; /* 모서리 둥글게 */
-  background-color: #fff; /* 배경색 */
-  appearance: none; /* 기본 브라우저 스타일 제거 */
-  cursor: pointer; /* 포인터 커서 */
-}
-
-.form-group-inline select:focus {
-  border-color: #5c8a42; /* 초록색 테두리 */
-  outline: none; /* 기본 포커스 제거 */
-  box-shadow: 0 0 5px rgba(92, 138, 66, 0.3); /* 포커스 시 그림자 */
 }
 
 textarea {

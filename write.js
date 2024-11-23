@@ -13,4 +13,21 @@ document.addEventListener("DOMContentLoaded", function () {
 
     endDateInput.value = `${yyyy}-${mm}-${dd}`;
     endTimeInput.value = `${hh}:${min}`;
+
+    const pollOptionsContainer = document.querySelector(".poll-options");
+    const addOptionButton = document.querySelector(".add-option");
+
+    // 항목 추가 버튼 클릭 이벤트
+    addOptionButton.addEventListener("click", function () {
+        const newOption = document.createElement("div");
+        newOption.className = "poll-option";
+
+        newOption.innerHTML = `
+            <input type="text" placeholder="항목 입력">
+            <img src="image.png" alt="이미지 추가">
+        `;
+
+        // 버튼 위에 새로운 항목 추가
+        pollOptionsContainer.insertBefore(newOption, addOptionButton);
+    });
 });
