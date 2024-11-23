@@ -86,7 +86,7 @@ header {
   position: fixed; /* 화면 왼쪽에 고정 */
   top: 75px; /* 헤더 바로 아래에 위치 */
   left: 0;
-  width: 13%; /* 너비 유지 */
+  width: 15%; /* 너비 유지 */
   height: calc(100vh - 75px); /* 화면 높이에서 헤더 높이를 뺀 값으로 설정 */
   background-color: #ddead1;
   z-index: 9; /* 헤더보다 아래에 위치 */
@@ -123,7 +123,7 @@ a {
 }
 
 .content {
-  margin-left: 13%; /* 사이드바 너비만큼 왼쪽 여백 */
+  margin-left: 17%; /* 사이드바 너비만큼 왼쪽 여백 */
   margin-top: 75px; /* 헤더 높이만큼 위쪽 여백 */
   padding: 20px;
   background-color: #ffffff;
