@@ -1,5 +1,5 @@
 body {
-  height: 5000px;
+  height: 100vh;
 }
 
 .hidden {
@@ -16,6 +16,12 @@ header {
   z-index: 10; /* 다른 요소 위에 표시 */
 }
 
+.custom-hr {
+  height: 1px; /* 선의 두께 설정 */
+  border: none; /* 기본 테두리 제거 */
+  background-color: #D9D9D9; /* 선의 색상 설정 */
+}
+
 .up {
   position: absolute; /* 위치를 절대값으로 설정 */
   top: 25px; /* 헤더 상단에서 10px 떨어지도록 설정 */
@@ -28,12 +34,12 @@ header {
 #CM {
   margin-left: 10px;
   margin-top: 10px;
+  cursor: pointer; /* 커서 변경 */
 }
 #bell {
   cursor: pointer;
-  width: 25px;
-  height: 25px;
 }
+
 #trash {
   cursor: pointer;
   position: absolute;
@@ -82,30 +88,34 @@ header {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* hover 시 강조 */
 }
 
+/* 사이드바 */
 .side {
-  position: fixed; /* 화면 왼쪽에 고정 */
-  top: 75px; /* 헤더 바로 아래에 위치 */
+  position: fixed;
+  top: 75px;
   left: 0;
-  width: 15%; /* 너비 유지 */
-  height: calc(100vh - 75px); /* 화면 높이에서 헤더 높이를 뺀 값으로 설정 */
+  width: 15%;
+  height: calc(100vh - 75px);
   background-color: #ddead1;
-  z-index: 9; /* 헤더보다 아래에 위치 */
-  overflow-y: auto; /* 사이드바 내용이 길 경우 스크롤 가능 */
-  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.25);
+  z-index: 9;
+  overflow-y: auto;
+  padding-top: 20px;
+  box-shadow: 4px 0px 4px rgba(0, 0, 0, 0.1);
 }
 
-.side #one {
-  margin-top: 50px; /* 상단과의 간격 */
-  margin-left: 20px;
-  height: 50px;
-  font-size: 18px;
+.side ul {
+  list-style: none;
+  padding: 0;
 }
+
+.side li {
+  margin: 10px 20px;
+  font-size: 14px;
+}
+
 .side li a {
-  display: inline; /* 블록 요소로 변경 */
-  margin-left: 30px; /* 왼쪽 간격 */
-  line-height: 32px;
+  color: black;
+  text-decoration: none;
 }
-
 body,
 ul,
 li {
@@ -117,16 +127,109 @@ li {
 a {
   color: inherit; /* 부모 엘리먼트의 값을 물려받는다 */
   text-decoration: none; /* 해당 태그의 text-decoration 속성을 none 값으로 하는 것으로 밑줄을 제거한다 */
-  display: inline;
-  margin: 0;
-  padding: 0;
 }
 
+/* 콘텐츠 영역 */
 .content {
-  margin-left: 17%; /* 사이드바 너비만큼 왼쪽 여백 */
-  margin-top: 75px; /* 헤더 높이만큼 위쪽 여백 */
+  margin-left: 17%; /* 사이드바 크기만큼 왼쪽 여백 */
+  margin-right: auto; /* 오른쪽 여백 자동 */
+  margin-top: 100px; /* 헤더 높이와 간격 확보 */
   padding: 20px;
+  max-width: 800px; /* 콘텐츠 최대 너비 */
   background-color: #ffffff;
-  min-height: calc(100vh - 75px); /* 화면 높이에서 헤더 높이를 뺀 값 */
-  overflow-y: auto; /* 콘텐츠가 많을 경우 스크롤 가능 */
+}
+
+h2 {
+  margin-bottom: 20px; /* 제목과 게시글 간 간격 */
+  font-size: 24px; /* 글자 크기 */
+  font-weight: bold; /* 굵게 설정 */
+  text-align: left; /* 왼쪽 정렬 */
+  color: #333; /* 어두운 색상 */
+}
+
+/* 게시글 스타일 */
+.post {
+  background-color: #e5f4e3; /* 연한 녹색 배경 */
+  border-radius: 10px; /* 모서리 둥글게 */
+  padding: 20px; /* 내부 여백 */
+  margin: 20px auto; /* 게시글을 가운데 정렬하고 상하 간격 추가 */
+  max-width: 700px; /* 게시글의 최대 너비를 제한 */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 효과 */
+}
+
+.post-header {
+  display: flex; /* 프로필 이미지와 텍스트를 가로로 정렬 */
+  align-items: center; /* 수직 정렬 */
+  margin-bottom: 10px; /* 제목 아래 여백 */
+}
+
+.profile-pic {
+  width: 40px; /* 프로필 이미지 크기 */
+  height: 40px;
+  border-radius: 50%; /* 원형 이미지 */
+  margin-right: 10px; /* 텍스트와 간격 */
+}
+
+.username {
+  font-weight: bold; /* 이름 굵게 */
+  font-size: 15px; /* 이름 글자 크기 */
+}
+
+.date {
+  color: gray; /* 날짜는 연한 색 */
+  font-size: 15px; /* 작은 글자 크기 */
+  margin-left: 5px; /* 이름과 간격 */
+}
+
+.poll {
+  margin-top: 10px; /* 투표 섹션 위쪽 여백 */
+}
+
+.poll input {
+  width: calc(100% - 20px); /* 양쪽 여백 포함한 너비 */
+  margin-bottom: 10px; /* 각 항목 간 간격 */
+  padding: 8px; /* 내부 여백 */
+  border: 1px solid #ccc; /* 테두리 색상 */
+  border-radius: 5px; /* 모서리 둥글게 */
+}
+
+.poll button {
+  background-color: #91c788; /* 버튼 녹색 배경 */
+  color: white; /* 텍스트 색상 */
+  border: none; /* 테두리 없음 */
+  padding: 10px 20px; /* 버튼 내부 여백 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  cursor: pointer; /* 커서 모양 변경 */
+}
+
+.poll button:hover {
+  background-color: #74b370; /* 호버 시 어두운 녹색 */
+}
+
+/* 작은 화면 (예: 모바일) */
+@media (max-width: 768px) {
+  .side {
+    width: 100%; /* 사이드바를 화면 전체로 확장 */
+    position: relative; /* 고정된 위치 해제 */
+    top: 0;
+    height: auto; /* 높이를 자동으로 조정 */
+    box-shadow: none; /* 그림자 제거 */
+  }
+
+  .content {
+    margin-left: 0; /* 왼쪽 여백 제거 */
+    max-width: 100%; /* 콘텐츠가 화면 너비에 맞게 확장 */
+    padding: 10px; /* 내부 여백 축소 */
+  }
+
+  .post {
+    padding: 15px; /* 내부 여백 축소 */
+  }
+}
+
+/* 큰 화면 (예: 데스크톱) */
+@media (min-width: 1024px) {
+  .content {
+    max-width: 1200px; /* 더 넓은 화면에서는 최대 너비를 확장 */
+  }
 }
