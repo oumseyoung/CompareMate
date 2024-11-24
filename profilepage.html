@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CM main</title>
+    <link rel="stylesheet" href="profilepage.css" />
+  </head>
+  <body>
+    <header>
+      <img src="icon.png" alt="CM" id="CM" />
+      <div class="up">
+        <img src="Bell.png" alt="알람" id="bell" onclick="toggleLayer()" />
+        <div id="layer" class="hidden">
+          <!--이부분 수정해야합니다!!!!!-->
+          <ul>
+            <li><a href="#">알람</a></li>
+            <li><a href="#">알람</a></li>
+            <li><a href="#">알람</a></li>
+            <li><a href="#">알람</a></li>
+            <li><a href="#">알람</a></li>
+          </ul>
+        </div>
+
+        <a href="main.html">게시판</a>
+        <a href="mypage.html">마이페이지</a>
+        <a href="first.html">로그아웃</a>
+      </div>
+      <hr />
+    </header>
+    <aside class="side">
+      <!--이부분 수정해야합니다!!!!!-->
+      <ul>
+        <li id="one">카테고리</li>
+        <li><a href="main.html">전체 게시글</a></li>
+        <li><a href="###.html">전자제품</a></li>
+        <li><a href="###.html">전자제품</a></li>
+        <li><a href="###.html">전자제품</a></li>
+        <li><a href="category.html">기타</a></li>
+      </ul>
+    </aside>
+
+
+    <div class="content">
+  <h2 class="profile-title">프로필</h2>
+  <div class="box">
+    <div class="profile-header">
+      <img src="" class="profile-image" />
+      <div class="profile-details">
+        <p>최홍서</p>
+        <p>관심분야 의류, 가전, 자동차, 청소용품</p>
+    	내가 쓴 게시글 수: 7 &nbsp;&nbsp;&nbsp;&nbsp;
+    	답변한 게시글 수: 12  <!--백에서 수정-->
+      </div>
+    </div>
+    <hr class="profile-hr">
+
+    <h3>최홍서님이 쓴 게시글</h3>
+    <div class="post">
+          <div class="post-title"><b>둘 중에 무엇을 살까요?</b><img src="menu.png"/></div>
+          <div class="post-info">
+          <img src="" class="profile-image-post"/>
+          최홍서 2024년 11월 17일<!-- 백 -->
+          <img src="bookmark.png" class="bookmark"/>
+          </div>  
+          
+          
+        <div class="post-content"><br>개발용 노트북을 사려고 합니다.</div>
+        <div class="item">
+            <img src="vote.png"/>
+            <p>투표</p>
+            <div class="vote">
+                <div class="list">항목1</div>
+            </div>
+        </div>
+        
+        </div>
+  </div>
+  
+</div>
+
+  </body>
+</html>
