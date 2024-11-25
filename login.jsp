@@ -6,7 +6,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CM Login</title>
-    <link rel="stylesheet" href="register.css" />
+    <link rel="stylesheet" href="login.css" />
 </head>
 <body>
     <img src="icon.png" alt="CM" />
@@ -20,6 +20,11 @@
             <p>비밀번호</p>
             <input type="password" id="psw1" required />
             <input type="button" id="submit" value="로그인" onclick="login()" />
+            
+            <!-- 아이디 찾기 및 비밀번호 찾기 링크 추가 -->
+            <div class="links">
+                <a href="findId.jsp">아이디 찾기</a> | <a href="findPassword.jsp">비밀번호 찾기</a> | <a href="register.jsp">회원가입</a>
+            </div>
         </div>
     </div>
 

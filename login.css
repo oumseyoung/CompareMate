@@ -1,1 +1,107 @@
 @charset "UTF-8";
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+}
+.content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+h2 {
+  text-align: center;
+  color: #1e1e1e;
+  font-weight: 700;
+  font-size: 50px;
+  margin: 0;
+}
+
+h3 {
+  text-align: center;
+  color: #1e1e1e;
+  font-weight: 500;
+  font-size: 30px;
+  margin: 0;
+}
+img {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  gap: 10px;
+}
+
+/* 왼쪽에 위치한 <p> 태그 스타일 */
+.form-container p {
+  width: 100%;
+  text-align: left;
+  margin: 0;
+  font-weight: bold;
+}
+
+/* 입력 필드 스타일 */
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #87ab69;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+.input-group {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  width: 100%;
+}
+
+/* 중복확인 버튼 스타일 */
+#duplicate-check {
+  padding: 10px;
+  background: #ddead1;
+  border: 1px solid #658354;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100px;
+}
+
+/* 가입하기 버튼 스타일 */
+#submit {
+  width: 100%;
+  padding: 15px;
+  background: #87ab69;
+  color: white;
+  border: 1px solid #658354;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.links {
+    margin-top: 10px;
+    text-align: center;
+    opacity: 0.6; /* 전체 링크 요소의 투명도 설정 */
+}
+
+.links a {
+    color: black;
+    text-decoration: none;
+    margin: 0 5px;
+    transition: opacity 0.3s; /* 부드러운 전환 효과 */
+}
+
+.links a:hover {
+    opacity: 1; /* 호버 시 완전 불투명 */
+    text-decoration: underline;
+}
