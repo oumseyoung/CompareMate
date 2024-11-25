@@ -1,5 +1,6 @@
 body {
-  height: 100vh;
+  display: flex;
+  flex-direction: row;
 }
 
 .hidden {
@@ -95,7 +96,7 @@ header {
   left: 0;
   width: 15%;
   height: calc(100vh - 75px);
-  background-color: #ddead1;
+  background-color: #DDEAD1;
   z-index: 9;
   overflow-y: auto;
   padding-top: 20px;
@@ -107,6 +108,11 @@ header {
   padding: 0;
 }
 
+#one {
+  margin-bottom: 20px;
+  font-size: 17px;
+}
+
 .side li {
   margin: 10px 20px;
   font-size: 14px;
@@ -115,6 +121,7 @@ header {
 .side li a {
   color: black;
   text-decoration: none;
+  margin-left: 10px;
 }
 body,
 ul,
@@ -129,14 +136,13 @@ a {
   text-decoration: none; /* 해당 태그의 text-decoration 속성을 none 값으로 하는 것으로 밑줄을 제거한다 */
 }
 
-/* 콘텐츠 영역 */
 .content {
-  margin-left: 17%; /* 사이드바 크기만큼 왼쪽 여백 */
-  margin-right: auto; /* 오른쪽 여백 자동 */
-  margin-top: 100px; /* 헤더 높이와 간격 확보 */
-  padding: 20px;
-  max-width: 800px; /* 콘텐츠 최대 너비 */
-  background-color: #ffffff;
+  flex: 1;
+  margin-left: 24%; /* 기존 17%에서 약간 오른쪽으로 이동 */
+  margin-right: auto; /* 오른쪽 여백 자동 설정 */
+  margin-top: 100px; /* 헤더와 간격 확보 */
+  max-width: 900px; /* 기존 800px에서 더 넓게 확장 */
+  background-color: #ffffff; /* 배경색 유지 */
 }
 
 h2 {
@@ -149,12 +155,32 @@ h2 {
 
 /* 게시글 스타일 */
 .post {
-  background-color: #e5f4e3; /* 연한 녹색 배경 */
+  position: relative;
+  background-color: #DDEAD1; /* 연한 녹색 배경 */
   border-radius: 10px; /* 모서리 둥글게 */
-  padding: 20px; /* 내부 여백 */
-  margin: 20px auto; /* 게시글을 가운데 정렬하고 상하 간격 추가 */
-  max-width: 700px; /* 게시글의 최대 너비를 제한 */
+  padding: 10px 40px; /* 내부 여백 */
+  margin: 25px 0px 30px 0px;
+  max-width: 900px; /* 게시글의 최대 너비를 제한 */
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 효과 */
+}
+
+.bookmark-checkbox {
+  display: none; /* 체크박스 숨기기 */
+}
+
+.bookmark-icon {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: pointer; /* 선택 사항: 호버 시 포인터로 변경 */
+}
+
+.post-title {
+  font-size: 24px; /* 제목 크기 */
+  font-weight: normal; /* 굵은 글씨 */
+  margin-bottom: 10px; /* 내용과의 간격 */
+  color: #000000; /* 제목 색상 */
+  text-align: left; /* 왼쪽 정렬 */
 }
 
 .post-header {
@@ -164,14 +190,14 @@ h2 {
 }
 
 .profile-pic {
-  width: 40px; /* 프로필 이미지 크기 */
-  height: 40px;
+  width: 30px; /* 프로필 이미지 크기 */
+  height: 30px;
   border-radius: 50%; /* 원형 이미지 */
   margin-right: 10px; /* 텍스트와 간격 */
+  cursor: pointer;
 }
 
 .username {
-  font-weight: bold; /* 이름 굵게 */
   font-size: 15px; /* 이름 글자 크기 */
 }
 
@@ -183,27 +209,132 @@ h2 {
 
 .poll {
   margin-top: 10px; /* 투표 섹션 위쪽 여백 */
+  border-radius: 10px;
+  border: 0.3px solid #87AB69;
+  background-color: #C7DDB5;
+  padding: 10px 20px 15px 20px;
 }
 
-.poll input {
-  width: calc(100% - 20px); /* 양쪽 여백 포함한 너비 */
-  margin-bottom: 10px; /* 각 항목 간 간격 */
-  padding: 8px; /* 내부 여백 */
-  border: 1px solid #ccc; /* 테두리 색상 */
+#multi-select {
+  color: #658354;
+  font-size: 13px;
+}
+
+.poll-header {
+  display: flex; /* Flexbox로 내부 요소 가로 정렬 */
+  align-items: center; /* 이미지와 텍스트를 세로 중앙 정렬 */
+  gap: 10px; /* 이미지와 텍스트 사이 간격 */
+  padding-bottom: 8px;
+}
+
+.poll-header img {
+  width: 24px; /* 이미지 너비 */
+  height: 24px; /* 이미지 높이 */
+}
+
+.poll-option {
+  display: flex; /* 내부 요소를 가로로 배치 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 텍스트와 이미지를 양 끝으로 배치 */
+  padding: 10px; /* 내부 여백 */
+  margin-bottom: 10px; /* 항목 간 간격 */
+  border: 1px solid #ccc; /* 테두리 추가 */
+  border-radius: 10px; /* 모서리를 둥글게 */
+  background-color: #f9f9f9; /* 배경색 */
+  cursor: pointer; /* 커서 모양 변경 */
+}
+
+.poll-option.checked {
+  background-color: #e8f5e9; /* 체크된 상태의 배경색 */
+  border-color: #91c788; /* 체크된 상태의 테두리 색상 */
+}
+
+.poll-option:hover {
+  background-color: #e8f5e9; /* 호버 시 배경색 변경 */
+  border-color: #91c788; /* 호버 시 테두리 색 변경 */
+}
+
+.poll-option input[type="checkbox"] {
+  display: none; /* 체크박스 숨기기 */
+}
+
+.poll-option span {
+  font-size: 16px; /* 텍스트 크기 */
+  margin-right: 10px; /* 텍스트와 이미지 간 간격 */
+}
+
+.poll-option img {
+  width: 25px; /* 이미지 크기 */
+  height: 25px;
+}
+
+#image-popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* 반투명 배경 */
+  display: none; /* 기본적으로 숨김 */
+  justify-content: center; /* 콘텐츠를 가로 중앙에 정렬 */
+  align-items: center; /* 콘텐츠를 세로 중앙에 정렬 */
+  z-index: 1000;
+}
+
+.popup-content {
+  position: relative;
+  max-width: 90%; /* 팝업 최대 너비 */
+  max-height: 90%; /* 팝업 최대 높이 */
+  padding: 20px;
+  background-color: #fff; /* 팝업 배경색 */
+  border-radius: 10px; /* 모서리를 둥글게 설정 */
+  display: flex; /* 플렉스박스 사용 */
+  flex-direction: column; /* 요소를 위아래로 배치 */
+  align-items: center; /* 요소를 가운데 정렬 */
+}
+
+#popup-image {
+  display: block;
+  max-width: 90%; /* 팝업 창 너비의 90%로 제한 */
+  max-height: 70vh; /* 화면 높이의 70%로 제한 */
+  margin: 0 auto; /* 이미지 가운데 정렬 */
+  border-radius: 10px; /* 이미지 모서리를 둥글게 설정 */
+}
+
+#close-popup {
+  background-color: #DDEAD1; /* 버튼 배경색 */
+  color: #000; /* 텍스트 색상 */
+  padding: 10px 20px; /* 내부 여백 */
+  font-size: 14px; /* 글자 크기 */
+  line-height: 1.5; /* 텍스트 세로 간격 */
+  cursor: pointer; /* 클릭 가능한 포인터 표시 */
   border-radius: 5px; /* 모서리 둥글게 */
+  border: 1px solid #87AB69; /* 테두리 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+  margin-top: 20px; /* 이미지와 닫기 버튼 간 간격 */
+  width: auto; /* 기본적으로 텍스트 길이에 맞춤 */
+  max-width: 200px; /* 버튼 최대 너비 제한 */
 }
 
 .poll button {
-  background-color: #91c788; /* 버튼 녹색 배경 */
-  color: white; /* 텍스트 색상 */
-  border: none; /* 테두리 없음 */
-  padding: 10px 20px; /* 버튼 내부 여백 */
-  border-radius: 5px; /* 모서리 둥글게 */
+  width: calc(100%); /* 양쪽 여백 포함한 너비 */
+  background-color: #A3C585; /* 버튼 녹색 배경 */
+  color: #000000; /* 텍스트 색상 */
+  font-size: 20px;
+  padding: 10px; /* 버튼 내부 여백 */
+  border-radius: 10px; /* 모서리 둥글게 */
+  border: 1px solid #87AB69;
   cursor: pointer; /* 커서 모양 변경 */
 }
 
 .poll button:hover {
-  background-color: #74b370; /* 호버 시 어두운 녹색 */
+  background-color: #87AB69; /* 호버 시 어두운 녹색 */
+}
+
+.comment-button {
+  cursor: pointer; /* 클릭 가능하도록 설정 */
 }
 
 /* 작은 화면 (예: 모바일) */
@@ -217,7 +348,7 @@ h2 {
   }
 
   .content {
-    margin-left: 0; /* 왼쪽 여백 제거 */
+    margin-left: 15%; /* 왼쪽 여백 제거 */
     max-width: 100%; /* 콘텐츠가 화면 너비에 맞게 확장 */
     padding: 10px; /* 내부 여백 축소 */
   }
