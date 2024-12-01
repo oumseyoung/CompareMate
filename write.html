@@ -15,10 +15,21 @@
       <div class="up">
         <img src="Bell.png" alt="알람" id="bell" onclick="toggleLayer()" />
         <div id="layer" class="hidden">
-          <ul>
-            <li><a href="#">알람 1</a></li>
-            <li><a href="#">알람 2</a></li>
-            <li><a href="#">알람 3</a></li>
+          <!--이부분 수정해야합니다!!!!!-->
+          <img
+            src="trash.png"
+            alt="휴지통"
+            id="trash"
+            onclick="clearAlerts()"
+          />
+          <ul id="alert-list">
+            <a href="#">
+              <li class="alert-item">
+                <img src="circle.png" alt="프로필" /><span
+                  >투표 내용 또는 댓글 내용<br />게시글 제목</span
+                >
+              </li>
+            </a>
           </ul>
         </div>
         <a href="main.html">게시판</a>
