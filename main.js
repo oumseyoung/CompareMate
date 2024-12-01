@@ -83,14 +83,27 @@ function filterPosts(category) {
   });
 }
 
-// 모든 poll-option 요소를 선택합니다.
+// 투표 옵션에 이벤트 리스너 추가 (checkbox와 radio 모두 처리)
 const pollOptions = document.querySelectorAll('.poll-option');
 
 pollOptions.forEach(option => {
-  const checkbox = option.querySelector('input[type="checkbox"]');
-  checkbox.addEventListener('change', () => {
-    if (checkbox.checked) {
+  const input = option.querySelector('input[type="checkbox"], input[type="radio"]');
+  input.addEventListener('change', () => {
+    const isRadio = input.type === 'radio'; // 여기서 isRadio 변수 정의
+    if (input.checked) {
       option.classList.add('checked');
+      if (isRadio) {
+        // 라디오 버튼인 경우, 동일한 그룹의 다른 옵션을 해제
+        const name = input.name;
+        const inputsInGroup = document.querySelectorAll(`input[name="${name}"]`);
+        inputsInGroup.forEach(otherInput => {
+          if (otherInput !== input) {
+            otherInput.checked = false;
+            const otherOption = otherInput.closest('.poll-option');
+            otherOption.classList.remove('checked');
+          }
+        });
+      }
     } else {
       option.classList.remove('checked');
     }
@@ -138,16 +151,25 @@ document.querySelectorAll('button.vote-button').forEach(voteButton => {
   voteButton.addEventListener('click', () => {
     const postId = voteButton.getAttribute('data-post-id');
     const poll = voteButton.closest('.poll');
-    const pollOptions = poll.querySelectorAll('input[type="checkbox"]');
+    const pollOptions = poll.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+    const isMultipleChoice = poll.getAttribute('data-multiple-choice') === 'true';
 
     // 체크된 항목이 있는지 확인
     const selectedOptions = Array.from(pollOptions)
-      .filter(checkbox => checkbox.checked)
-      .map(checkbox => checkbox.value);
+      .filter(input => input.checked)
+      .map(input => input.value);
 
     if (selectedOptions.length > 0) {
+      // 기존의 투표 데이터를 로드
+      let voteData = JSON.parse(localStorage.getItem(`vote-${postId}`)) || {};
+
+      // 각 항목별 투표 수 업데이트
+      selectedOptions.forEach(option => {
+        voteData[option] = (voteData[option] || 0) + 1;
+      });
+
       // 투표 결과 저장
-      localStorage.setItem(`vote-${postId}`, JSON.stringify(selectedOptions));
+      localStorage.setItem(`vote-${postId}`, JSON.stringify(voteData));
 
       alert('투표가 완료되었습니다!');
 
@@ -201,6 +223,7 @@ window.addEventListener('load', () => {
   }
 });
 
+// 투표 결과 로드 및 UI 업데이트 함수 수정
 function loadVotes() {
   document.querySelectorAll('.poll').forEach(poll => {
     const postId = poll.getAttribute('data-post-id');
@@ -213,30 +236,27 @@ function loadVotes() {
       voteButton.disabled = true;
       voteButton.textContent = '이미 투표한 게시글입니다';
 
-      // 각 항목별 투표 수 계산
-      const voteCounts = {};
-      voteData.forEach(option => {
-        voteCounts[option] = (voteCounts[option] || 0) + 1;
-      });
-
       // poll-option 업데이트
       pollOptions.forEach(option => {
-        const checkbox = option.querySelector('input[type="checkbox"]');
-        checkbox.disabled = true;
+        const input = option.querySelector('input[type="checkbox"], input[type="radio"]');
+        input.disabled = true;
         option.classList.add('disabled');
 
-        const optionValue = checkbox.value;
-        const voteCount = voteCounts[optionValue] || 0;
+        const optionValue = input.value;
+        const voteCount = voteData[optionValue] || 0;
 
         // 투표 수를 표시할 span 추가
         let voteCountSpan = option.querySelector('.vote-count');
         if (!voteCountSpan) {
           voteCountSpan = document.createElement('span');
           voteCountSpan.className = 'vote-count';
-          voteCountSpan.style.marginLeft = '10px';
+          voteCountSpan.style.marginRight = '10px';
           voteCountSpan.style.fontSize = '14px';
           voteCountSpan.style.color = '#555';
-          option.appendChild(voteCountSpan);
+          // 이미지 요소를 선택
+          const imageElement = option.querySelector('img');
+          // 투표 수를 이미지 왼쪽에 삽입
+          option.insertBefore(voteCountSpan, imageElement);
         }
         voteCountSpan.textContent = `(${voteCount}표)`;
       });
@@ -255,35 +275,33 @@ function updateVoteUI(postId) {
     voteButton.disabled = true;
     voteButton.textContent = '이미 투표한 게시글입니다';
 
-    // 각 항목별 투표 수 계산 (임시로 로컬스토리지 사용)
-    const voteCounts = {};
-    voteData.forEach(option => {
-      voteCounts[option] = (voteCounts[option] || 0) + 1;
-    });
-
-    // poll-option 업데이트
-    // 투표 수를 이미지 왼쪽에 추가
     pollOptions.forEach(option => {
-      const checkbox = option.querySelector('input[type="checkbox"]');
-      checkbox.disabled = true; // 체크박스 비활성화
-      option.classList.add('disabled'); // 비활성화 스타일 추가
+      const input = option.querySelector('input[type="checkbox"], input[type="radio"]');
+      input.disabled = true;
+      option.classList.add('disabled');
 
-      const optionValue = checkbox.value;
-      const voteCount = voteCounts[optionValue] || 0;
+      const optionValue = input.value;
+      const voteCount = voteData[optionValue] || 0;
 
       // 투표 수를 표시할 span 추가
       let voteCountSpan = option.querySelector('.vote-count');
       if (!voteCountSpan) {
         voteCountSpan = document.createElement('span');
         voteCountSpan.className = 'vote-count';
-        voteCountSpan.style.marginRight = '10px'; // 이미지와 간격
+        voteCountSpan.style.marginRight = '10px';
         voteCountSpan.style.fontSize = '14px';
         voteCountSpan.style.color = '#555';
-        // 이미지 앞에 추가
+        // 이미지 요소를 선택
         const imageElement = option.querySelector('img');
+        // 투표 수를 이미지 왼쪽에 삽입
         option.insertBefore(voteCountSpan, imageElement);
       }
       voteCountSpan.textContent = `(${voteCount}표)`;
     });
   }
 }
+
+// 페이지 로드 시 투표 결과 로드
+window.addEventListener('load', () => {
+  loadVotes();
+});
