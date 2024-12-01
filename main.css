@@ -136,6 +136,23 @@ a {
   text-decoration: none; /* 해당 태그의 text-decoration 속성을 none 값으로 하는 것으로 밑줄을 제거한다 */
 }
 
+.floating-button {
+  position: fixed; /* 화면에 고정 */
+  bottom: 30px; /* 화면 아래에서 20px 위 */
+  right: 30px; /* 화면 오른쪽에서 20px 왼쪽 */
+  display: flex; /* 내용물 가운데 정렬 */
+  justify-content: center;
+  align-items: center;
+  z-index: 100; /* 다른 요소 위에 표시 */
+  cursor: pointer; /* 클릭 가능 */
+}
+
+.floating-button img {
+  width: 80px; /* 이미지 크기 고정 */
+  height: 80px;
+  object-fit: cover; /* 이미지를 잘리지 않게 표시 */
+}
+
 .content {
   flex: 1;
   margin-left: 24%; /* 기존 17%에서 약간 오른쪽으로 이동 */
