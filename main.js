@@ -55,17 +55,30 @@ categoryLinks.forEach(link => {
 
 function filterPosts(category) {
   const posts = document.querySelectorAll('.post');
+  const contentTitle = document.querySelector('.content h2'); // <h2> 요소 선택
+
+  // 카테고리 이름을 결정
+  const categoryNames = {
+    all: '전체 게시글',
+    electronics: '전자제품',
+    fashion: '패션/의류',
+    beauty: '뷰티/건강',
+    food: '식품/음료',
+    household: '생활용품',
+    hobby: '취미/여가',
+    automotive: '자동차/오토바이',
+    others: '기타',
+  };
+
+  // <h2> 내용을 업데이트
+  contentTitle.textContent = categoryNames[category] || '전체 게시글';
 
   posts.forEach(post => {
     if (category === 'all') {
       post.style.display = 'block';
     } else {
-      const postCategory = post.getAttribute('data-category'); // 각 포스트에 data-category 속성 추가 필요
-      if (postCategory === category) {
-        post.style.display = 'block';
-      } else {
-        post.style.display = 'none';
-      }
+      const postCategory = post.getAttribute('data-category');
+      post.style.display = postCategory === category ? 'block' : 'none';
     }
   });
 }
@@ -187,3 +200,90 @@ window.addEventListener('load', () => {
     popup.classList.add('hidden');
   }
 });
+
+function loadVotes() {
+  document.querySelectorAll('.poll').forEach(poll => {
+    const postId = poll.getAttribute('data-post-id');
+    const voteData = JSON.parse(localStorage.getItem(`vote-${postId}`));
+
+    if (voteData) {
+      const voteButton = poll.querySelector('button.vote-button');
+      const pollOptions = poll.querySelectorAll('.poll-option');
+
+      voteButton.disabled = true;
+      voteButton.textContent = '이미 투표한 게시글입니다';
+
+      // 각 항목별 투표 수 계산
+      const voteCounts = {};
+      voteData.forEach(option => {
+        voteCounts[option] = (voteCounts[option] || 0) + 1;
+      });
+
+      // poll-option 업데이트
+      pollOptions.forEach(option => {
+        const checkbox = option.querySelector('input[type="checkbox"]');
+        checkbox.disabled = true;
+        option.classList.add('disabled');
+
+        const optionValue = checkbox.value;
+        const voteCount = voteCounts[optionValue] || 0;
+
+        // 투표 수를 표시할 span 추가
+        let voteCountSpan = option.querySelector('.vote-count');
+        if (!voteCountSpan) {
+          voteCountSpan = document.createElement('span');
+          voteCountSpan.className = 'vote-count';
+          voteCountSpan.style.marginLeft = '10px';
+          voteCountSpan.style.fontSize = '14px';
+          voteCountSpan.style.color = '#555';
+          option.appendChild(voteCountSpan);
+        }
+        voteCountSpan.textContent = `(${voteCount}표)`;
+      });
+    }
+  });
+}
+
+function updateVoteUI(postId) {
+  const poll = document.querySelector(`.poll[data-post-id="${postId}"]`);
+  const voteButton = poll.querySelector('button.vote-button');
+  const pollOptions = poll.querySelectorAll('.poll-option');
+
+  const voteData = JSON.parse(localStorage.getItem(`vote-${postId}`));
+
+  if (voteData) {
+    voteButton.disabled = true;
+    voteButton.textContent = '이미 투표한 게시글입니다';
+
+    // 각 항목별 투표 수 계산 (임시로 로컬스토리지 사용)
+    const voteCounts = {};
+    voteData.forEach(option => {
+      voteCounts[option] = (voteCounts[option] || 0) + 1;
+    });
+
+    // poll-option 업데이트
+    // 투표 수를 이미지 왼쪽에 추가
+    pollOptions.forEach(option => {
+      const checkbox = option.querySelector('input[type="checkbox"]');
+      checkbox.disabled = true; // 체크박스 비활성화
+      option.classList.add('disabled'); // 비활성화 스타일 추가
+
+      const optionValue = checkbox.value;
+      const voteCount = voteCounts[optionValue] || 0;
+
+      // 투표 수를 표시할 span 추가
+      let voteCountSpan = option.querySelector('.vote-count');
+      if (!voteCountSpan) {
+        voteCountSpan = document.createElement('span');
+        voteCountSpan.className = 'vote-count';
+        voteCountSpan.style.marginRight = '10px'; // 이미지와 간격
+        voteCountSpan.style.fontSize = '14px';
+        voteCountSpan.style.color = '#555';
+        // 이미지 앞에 추가
+        const imageElement = option.querySelector('img');
+        option.insertBefore(voteCountSpan, imageElement);
+      }
+      voteCountSpan.textContent = `(${voteCount}표)`;
+    });
+  }
+}

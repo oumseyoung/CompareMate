@@ -246,7 +246,7 @@ h2 {
 
 .poll-option.checked {
   background-color: #e8f5e9; /* 체크된 상태의 배경색 */
-  border-color: #91c788; /* 체크된 상태의 테두리 색상 */
+  border: 3px solid #91c788; /* 테두리 추가 */
 }
 
 .poll-option:hover {
@@ -266,6 +266,36 @@ h2 {
 .poll-option img {
   width: 25px; /* 이미지 크기 */
   height: 25px;
+  pointer-events: auto; /* 이미지 클릭 가능 */
+  cursor: pointer; /* 마우스 포인터 표시 */
+}
+
+/* 이미 투표 완료된 버튼 */
+.vote-button:disabled {
+  background-color: #cccccc; /* 비활성화된 버튼 색상 */
+  color: #ffffff; /* 텍스트 색상 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+}
+
+.vote-button:disabled:hover {
+  background-color: #cccccc; /* hover 시에도 색상 유지 */
+}
+
+/* 비활성화된 poll-option 스타일 */
+.poll-option.disabled {
+  background-color: #e0e0e0; /* 비활성화된 배경색 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+  pointer-events: none; /* 클릭 및 hover 이벤트 비활성화 */
+}
+
+.poll-option.disabled:hover {
+  background-color: #e0e0e0; /* hover 시에도 색상 유지 */
+}
+
+.vote-count {
+  margin-left: 10px; /* 항목과 간격 */
+  font-size: 14px;
+  color: #555;
 }
 
 #image-popup {
