@@ -387,24 +387,48 @@ h2 {
   cursor: pointer; /* 클릭 가능하도록 설정 */
 }
 
+
 /* 작은 화면 (예: 모바일) */
 @media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
   .side {
-    width: 100%; /* 사이드바를 화면 전체로 확장 */
-    position: relative; /* 고정된 위치 해제 */
+    width: 100%;
+    position: relative;
     top: 0;
-    height: auto; /* 높이를 자동으로 조정 */
-    box-shadow: none; /* 그림자 제거 */
+    height: auto;
+    box-shadow: none;
+    order: 1;
+    margin: 0;
   }
 
   .content {
-    margin-left: 15%; /* 왼쪽 여백 제거 */
-    max-width: 100%; /* 콘텐츠가 화면 너비에 맞게 확장 */
-    padding: 10px; /* 내부 여백 축소 */
+    margin-left: 0;
+    margin-right: 30px; 
+    max-width: 100%; /* 콘텐츠가 전체 너비를 차지 */
+    padding: 10px;
+    order: 2;
   }
 
   .post {
-    padding: 15px; /* 내부 여백 축소 */
+    width: 100%; /* 게시글이 부모 요소의 너비를 완전히 차지 */
+    max-width: none; /* max-width 제한 해제 */
+    padding: 10px 15px;
+    margin: 15px 0px;
+  }
+}
+
+/* 중간 화면 (768px ~ 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .side {
+    width: 20%;
+  }
+
+  .content {
+    margin-left: 22%; /* 사이드바 너비에 따라 조정 */
+    max-width: 80%;
   }
 }
 
