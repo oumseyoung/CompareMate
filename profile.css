@@ -1,10 +1,12 @@
 body {
-  height: 5000px;
+  display: flex;
+  flex-direction: row;
 }
 
 .hidden {
   display: none;
 }
+
 header {
   position: fixed; /* 화면 상단에 고정 */
   top: 0;
@@ -116,11 +118,6 @@ header {
   margin-left: 10px;
 }
 
-body {
-  margin: 0;
-  padding: 0;
-  overflow-y: scroll;
-}
 body,
 ul,
 li {
@@ -218,80 +215,152 @@ h2 {
 
 .profile-hr {
   border: none;
-  border-top: 3px solid #ddd;
+  border-top: 1px solid #B3CF99;
   margin: 30px 0 0 0; /* 윗 여백 10px, 나머지 여백 0 */
 }
 
 .post {
-  margin-top: 20px;
-  padding: 10px;
-  background-color: #f4f4f4;
-  border-radius: 10px;
+  position: relative;
+  background-color: #F5F5F5; /* 연한 녹색 배경 */
+  border-radius: 10px; /* 모서리 둥글게 */
+  padding: 10px 40px; /* 내부 여백 */
+  margin: 25px 0px 30px 0px;
+  max-width: 900px; /* 게시글의 최대 너비를 제한 */
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 효과 */
 }
+
 #nickname-input {
   width: 40%;
   font-size: 20px;
   font-weight: bold;
 }
 
-.poll-item {
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  font-size: 14px;
+.poll {
+  margin-top: 10px; /* 투표 섹션 위쪽 여백 */
+  border-radius: 10px;
+  border: 0.3px solid #87AB69;
+  background-color: #C7DDB5;
+  padding: 10px 20px 15px 20px;
 }
 
-.poll-item p {
-  width: 100px; /* 항목 이름의 고정 너비 */
-  margin: 0;
+#multi-select {
+  color: #658354;
+  font-size: 13px;
 }
 
-.bar {
-  flex-grow: 1;
-  height: 25px;
-  background-color: #ddead1;
-  border-radius: 5px;
-  position: relative;
-  line-height: 25px;
-  text-align: right;
-  padding-right: 10px;
-  color: #333;
-  font-size: 14px;
+.poll-header {
+  display: flex; /* Flexbox로 내부 요소 가로 정렬 */
+  align-items: center; /* 이미지와 텍스트를 세로 중앙 정렬 */
+  gap: 10px; /* 이미지와 텍스트 사이 간격 */
+  padding-bottom: 8px;
 }
 
-.bar::before {
-  content: "";
-  display: block;
-  height: 100%;
-  width: 100%;
+.poll-header img {
+  width: 24px; /* 이미지 너비 */
+  height: 24px; /* 이미지 높이 */
+}
+
+.poll-option {
+  display: flex; /* 내부 요소를 가로로 배치 */
+  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: space-between; /* 텍스트와 이미지를 양 끝으로 배치 */
+  padding: 10px; /* 내부 여백 */
+  margin-bottom: 10px; /* 항목 간 간격 */
+  border: 1px solid #ccc; /* 테두리 추가 */
+  border-radius: 10px; /* 모서리를 둥글게 */
+  background-color: #f9f9f9; /* 배경색 */
+  cursor: pointer; /* 커서 모양 변경 */
+}
+
+.poll-option.checked {
+  background-color: #e8f5e9; /* 체크된 상태의 배경색 */
+  border: 3px solid #91c788; /* 테두리 추가 */
+}
+
+.poll-option:hover {
+  background-color: #e8f5e9; /* 호버 시 배경색 변경 */
+  border-color: #91c788; /* 호버 시 테두리 색 변경 */
+}
+
+.poll-option input[type="checkbox"],
+.poll-option input[type="radio"] {
   position: absolute;
-  top: 0;
-  left: 0;
-  background-color: #a6cf98;
-  z-index: -1;
-  border-radius: 5px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.poll-option span {
+  font-size: 16px; /* 텍스트 크기 */
+  margin-right: 10px; /* 텍스트와 이미지 간 간격 */
+}
+
+.poll-option img {
+  width: 25px; /* 이미지 크기 */
+  height: 25px;
+  pointer-events: auto; /* 이미지 클릭 가능 */
+  cursor: pointer; /* 마우스 포인터 표시 */
+}
+
+/* 이미 투표 완료된 버튼 */
+.vote-button:disabled {
+  background-color: #cccccc; /* 비활성화된 버튼 색상 */
+  color: #ffffff; /* 텍스트 색상 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+}
+
+.vote-button:disabled:hover {
+  background-color: #cccccc; /* hover 시에도 색상 유지 */
+}
+
+/* 비활성화된 poll-option 스타일 */
+.poll-option.disabled {
+  background-color: #e0e0e0; /* 비활성화된 배경색 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+  pointer-events: none; /* 클릭 및 hover 이벤트 비활성화 */
+}
+
+.poll-option.disabled:hover {
+  background-color: #e0e0e0; /* hover 시에도 색상 유지 */
+}
+
+.vote-count {
+  margin-left: 10px; /* 항목과 간격 */
+  font-size: 14px;
+  color: #555;
 }
 
 .post-title {
-  display: flex; /* 내부 요소를 수평으로 정렬 */
-  justify-content: space-between; /* 텍스트와 아이콘을 양쪽으로 배치 */
-  align-items: center; /* 수직 정렬 */
-  font-size: 16px;
-  margin-bottom: 5px;
-  position: relative;
+  font-size: 24px;
+  font-weight: normal;
+  margin-bottom: 10px;
+  color: #000000;
+  text-align: left;
 }
 
-.post-info {
-  display: flex; /* 플렉스 컨테이너로 설정 */
-  align-items: center; /* 수직 정렬을 가운데로 맞춤 */
-  gap: 10px; /* 이미지와 텍스트 사이 간격 */
-  font-size: 14px;
+.post-header {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
-.post-title img {
-  width: 25px; /* 아이콘 크기 조정 */
-  height: 25px;
+.profile-pic {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  margin-right: 10px;
+  cursor: pointer;
 }
+
+.username {
+  font-size: 15px;
+}
+
+.date {
+  color: gray;
+  font-size: 15px;
+  margin-left: 5px;
+}
+
 .bookmark-checkbox {
   display: none; /* 체크박스 숨기기 */
 }
@@ -311,80 +380,116 @@ h2 {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.8); /* 반투명 배경 */
   display: none; /* 기본적으로 숨김 */
-  justify-content: center; /* 가로 중앙 정렬 */
-  align-items: center; /* 세로 중앙 정렬 */
+  justify-content: center; /* 콘텐츠를 가로 중앙에 정렬 */
+  align-items: center; /* 콘텐츠를 세로 중앙에 정렬 */
   z-index: 1000;
 }
 
 .popup-content {
   position: relative;
-  max-width: 80%; /* 팝업 최대 너비 */
-  max-height: 80%; /* 팝업 최대 높이 */
+  max-width: 90%; /* 팝업 최대 너비 */
+  max-height: 90%; /* 팝업 최대 높이 */
   padding: 20px;
   background-color: #fff; /* 팝업 배경색 */
   border-radius: 10px; /* 모서리를 둥글게 설정 */
   display: flex; /* 플렉스박스 사용 */
-  flex-direction: column; /* 위아래 정렬 */
-  align-items: center; /* 중앙 정렬 */
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* 팝업 그림자 */
+  flex-direction: column; /* 요소를 위아래로 배치 */
+  align-items: center; /* 요소를 가운데 정렬 */
 }
 
 #popup-image {
   display: block;
-  max-width: 100%; /* 이미지 너비 제한 */
-  max-height: 70vh; /* 화면 높이 제한 */
+  max-width: 90%; /* 팝업 창 너비의 90%로 제한 */
+  max-height: 70vh; /* 화면 높이의 70%로 제한 */
   margin: 0 auto; /* 이미지 가운데 정렬 */
-  border-radius: 10px; /* 이미지 모서리 둥글게 */
+  border-radius: 10px; /* 이미지 모서리를 둥글게 설정 */
 }
 
 #close-popup {
-  margin-top: 20px; /* 닫기 버튼과 이미지 간 간격 */
-  padding: 10px 20px;
-  background-color: #ddead1;
-  color: #333;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 14px;
+  background-color: #DDEAD1; /* 버튼 배경색 */
+  color: #000; /* 텍스트 색상 */
+  padding: 10px 20px; /* 내부 여백 */
+  font-size: 14px; /* 글자 크기 */
+  line-height: 1.5; /* 텍스트 세로 간격 */
+  cursor: pointer; /* 클릭 가능한 포인터 표시 */
+  border-radius: 5px; /* 모서리 둥글게 */
+  border: 1px solid #87AB69; /* 테두리 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  white-space: nowrap; /* 텍스트 줄바꿈 방지 */
+  box-sizing: border-box; /* 패딩 포함 크기 계산 */
+  margin-top: 20px; /* 이미지와 닫기 버튼 간 간격 */
+  width: auto; /* 기본적으로 텍스트 길이에 맞춤 */
+  max-width: 200px; /* 버튼 최대 너비 제한 */
+}
+
+.poll button {
+  width: calc(100%); /* 양쪽 여백 포함한 너비 */
+  background-color: #A3C585; /* 버튼 녹색 배경 */
+  color: #000000; /* 텍스트 색상 */
+  font-size: 20px;
+  padding: 10px; /* 버튼 내부 여백 */
+  border-radius: 10px; /* 모서리 둥글게 */
+  border: 1px solid #87AB69;
+  cursor: pointer; /* 커서 모양 변경 */
 }
 
 #close-popup:hover {
   background-color: #c7ddb5; /* 닫기 버튼 호버 색상 */
 }
 
-.clickable-image {
-  cursor: pointer;
+.poll button:hover {
+  background-color: #87AB69; /* 호버 시 어두운 녹색 */
 }
 
+.comment-button {
+  cursor: pointer; /* 클릭 가능하도록 설정 */
+}
+
+/* 작은 화면 (예: 모바일) */
 @media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
   .side {
-    width: 100%; /* 사이드바를 화면 전체로 확장 */
-    position: relative; /* 고정된 위치 해제 */
+    width: 100%;
+    position: relative;
     top: 0;
-    height: auto; /* 높이를 자동으로 조정 */
-    box-shadow: none; /* 그림자 제거 */
+    height: auto;
+    box-shadow: none;
+    order: 1;
+    margin: 0;
   }
 
   .content {
-    margin-left: 15%; /* 왼쪽 여백 제거 */
-    max-width: 100%; /* 콘텐츠가 화면 너비에 맞게 확장 */
-    padding: 10px; /* 내부 여백 축소 */
-  }
-
-  .post-title {
-    font-size: 14px; /* 작은 화면에서는 글씨 크기를 줄임 */
-  }
-
-  .post-title img {
-    width: 10px; /* 작은 화면에서 아이콘 크기 조정 */
-    height: 10px;
+    margin-left: 0;
+    margin-right: 30px; 
+    max-width: 100%; /* 콘텐츠가 전체 너비를 차지 */
+    padding: 10px;
+    order: 2;
   }
 
   .post {
-    padding: 15px; /* 내부 여백 축소 */
+    width: 100%; /* 게시글이 부모 요소의 너비를 완전히 차지 */
+    max-width: none; /* max-width 제한 해제 */
+    padding: 10px 15px;
+    margin: 15px 0px;
   }
 }
 
+/* 중간 화면 (768px ~ 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .side {
+    width: 20%;
+  }
+
+  .content {
+    margin-left: 22%; /* 사이드바 너비에 따라 조정 */
+    max-width: 80%;
+  }
+}
+
+/* 큰 화면 (예: 데스크톱) */
 @media (min-width: 1024px) {
   .content {
     max-width: 1200px; /* 더 넓은 화면에서는 최대 너비를 확장 */
