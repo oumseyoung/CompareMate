@@ -185,18 +185,6 @@ h2 {
   gap: 12px;
 }
 
-#bookmark {
-  margin-left: 80px;
-  display: flex;
-  align-items: center; /* 버튼 내부 콘텐츠 정렬 */
-  padding: 8px;
-  gap: 8px;
-  width: 100px;
-  border: #a3c585;
-  background: #a3c585;
-  border-radius: 8px;
-  cursor: pointer;
-}
 #edit-profile {
   cursor: pointer;
 }
@@ -301,34 +289,18 @@ h2 {
 }
 
 .post-title img {
-  width: 12px; /* 아이콘 크기 조정 */
-  height: 12px;
+  width: 25px; /* 아이콘 크기 조정 */
+  height: 25px;
 }
-.menu-icon {
-  cursor: pointer;
+.bookmark-checkbox {
+  display: none; /* 체크박스 숨기기 */
 }
-.menu-popup {
+
+.bookmark-icon {
   position: absolute;
-  top: 56%; /* 메뉴 이미지 기준으로 아래에 위치 */
-  right: 3%;
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 5px;
-  flex-direction: column;
-  display: flex;
-}
-
-.menu-popup.hidden {
-  display: none; /* 숨기기 */
-}
-
-.menu-popup button {
-  color: black;
-  border: none;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 3px;
-  font-size: 14px;
+  top: 20px;
+  right: 20px;
+  cursor: pointer; /* 선택 사항: 호버 시 포인터로 변경 */
 }
 
 #image-popup {
@@ -391,16 +363,6 @@ h2 {
     top: 0;
     height: auto; /* 높이를 자동으로 조정 */
     box-shadow: none; /* 그림자 제거 */
-  }
-
-  #camera {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-  }
-  .camera img {
-    width: 20px; /* 작은 화면에서 크기를 줄임 */
   }
 
   .content {

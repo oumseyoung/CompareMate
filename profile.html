@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CM mypage</title>
-    <link rel="stylesheet" href="mypage.css" />
+    <title>**'s profile</title>
+    <link rel="stylesheet" href="profile.css" />
   </head>
   <body>
     <header>
@@ -55,36 +55,14 @@
       <div class="box" id="post-container">
         <div class="profile-header">
           <img src="" class="profile-image" id="profile-image" />
-          <div class="camera hidden" id="camera">
-            <img src="camera.png" alt="수정" id="camera-icon" />
-            <input
-              type="file"
-              id="file-input"
-              class="hidden"
-              accept=".png, .jpg, .jpeg"
-            />
-          </div>
           <div class="profile-details">
             <p>
-              <b id="nickname">본인 닉네임(마이페이지니까)</b>
-              <input
-                type="text"
-                id="nickname-input"
-                class="hidden"
-                value="본인 닉네임(마이페이지니까)"
-              />
+              <b id="nickname">타인 닉네임(남의 프로필이니까)</b>
               <span
                 ><img
                   src="germinal.png"
                   alt="새싹"
                   style="width: 30px; margin-left: 15px"
-              /></span>
-              <span
-                ><img
-                  src="edit.png"
-                  alt="수정"
-                  id="edit-profile"
-                  style="width: 25px; margin-left: 15px"
               /></span>
             </p>
             <p>
@@ -96,45 +74,12 @@
                   color: rgba(0, 0, 0, 0.47);
                   margin-left: 15px;
                 "
-              >
+                >전자제품
               </span>
             </p>
-            <div id="interest-edit" class="hidden">
-              <form id="interest-form">
-                <label
-                  ><input type="checkbox" value="전자제품" />전자제품</label
-                >
-                <label
-                  ><input type="checkbox" value="패션/의류" />패션/의류</label
-                >
-                <label
-                  ><input type="checkbox" value="뷰티/건강" />뷰티/건강</label
-                >
-                <label
-                  ><input type="checkbox" value="식품/음료" />식품/음료</label
-                >
-                <label
-                  ><input type="checkbox" value="생활용품" />생활용품</label
-                >
-                <label
-                  ><input type="checkbox" value="취미/여가" />취미/여가</label
-                >
-                <label
-                  ><input
-                    type="checkbox"
-                    value="자동차/오토바이"
-                  />자동차/오토바이</label
-                >
-                <label><input type="checkbox" value="기타" />기타</label>
-              </form>
-              <button type="button" id="save-profile">확인</button>
-            </div>
             <div class="line">
               <b>내가 쓴 게시글 수:</b> 7 &nbsp;&nbsp;&nbsp;&nbsp;
               <b>답변한 게시글 수:</b> 12 &nbsp;&nbsp;&nbsp;&nbsp;
-              <button id="bookmark" type="button">
-                <img src="blackmark.png" alt="북마크" onclick="" />북마크
-              </button>
             </div>
           </div>
         </div>
@@ -142,11 +87,17 @@
         <h3>최홍서님이 쓴 게시글</h3>
         <div class="post">
           <div class="post-title">
-            <b>둘 중에 무엇을 살까요?</b
-            ><img src="menu.png" alt="메뉴" class="menu-icon" />
-          </div>
-          <div class="menu-popup hidden">
-            <button class="delete-post-btn">삭제</button>
+            <b>둘 중에 무엇을 살까요?</b>
+            <div class="bookmark">
+              <input
+                type="checkbox"
+                id="bookmark-1"
+                class="bookmark-checkbox"
+              />
+              <label for="bookmark-1">
+                <img src="bookmark.png" alt="북마크" class="bookmark-icon" />
+              </label>
+            </div>
           </div>
           <div class="post-info">
             <img src="" class="profile-image-post" />
@@ -177,6 +128,6 @@
         </div>
       </div>
     </div>
-    <script src="mypage.js"></script>
+    <script src="profile.js"></script>
   </body>
 </html>
