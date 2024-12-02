@@ -130,6 +130,7 @@ header {
   text-decoration: none;
   margin-left: 10px;
 }
+
 body,
 ul,
 li {
@@ -386,6 +387,10 @@ h2 {
   cursor: pointer; /* 커서 모양 변경 */
 }
 
+#close-popup:hover {
+  background-color: #c7ddb5; /* 닫기 버튼 호버 색상 */
+}
+
 .poll button:hover {
   background-color: #87AB69; /* 호버 시 어두운 녹색 */
 }
@@ -465,7 +470,7 @@ h2 {
   align-items: flex-start; /* 왼쪽 정렬 */
   margin-bottom: 15px;
   padding: 10px;
-  background-color: #ddead1; /* 연한 녹색 */
+  background-color: #e8f5e9; /* 연한 녹색 */
   border-radius: 8px;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
@@ -506,6 +511,7 @@ h2 {
   border-radius: 10px;
   cursor: pointer;
   display: block;
+  margin-bottom: 15px;
 }
 
 #add-comment-button:hover {
