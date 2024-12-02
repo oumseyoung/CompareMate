@@ -55,29 +55,77 @@ categoryLinks.forEach(link => {
 
 function filterPosts(category) {
   const posts = document.querySelectorAll('.post');
+  const contentTitle = document.querySelector('.content h2'); // <h2> 요소 선택
+
+  // 카테고리 이름을 결정
+  const categoryNames = {
+    all: '전체 게시글',
+    electronics: '전자제품',
+    fashion: '패션/의류',
+    beauty: '뷰티/건강',
+    food: '식품/음료',
+    household: '생활용품',
+    hobby: '취미/여가',
+    automotive: '자동차/오토바이',
+    others: '기타',
+  };
+
+  // <h2> 내용을 업데이트
+  contentTitle.textContent = categoryNames[category] || '전체 게시글';
 
   posts.forEach(post => {
     if (category === 'all') {
       post.style.display = 'block';
     } else {
-      const postCategory = post.getAttribute('data-category'); // 각 포스트에 data-category 속성 추가 필요
-      if (postCategory === category) {
-        post.style.display = 'block';
-      } else {
-        post.style.display = 'none';
-      }
+      const postCategory = post.getAttribute('data-category');
+      post.style.display = postCategory === category ? 'block' : 'none';
     }
   });
 }
 
-// 모든 poll-option 요소를 선택합니다.
+// 사이드바 카테고리 클릭 이벤트
+document.querySelectorAll('.side ul li a').forEach(link => {
+  link.addEventListener('click', (event) => {
+      event.preventDefault(); // 기본 링크 동작 방지
+      const category = link.getAttribute('data-category');
+      // main.html로 이동하면서 카테고리를 URL에 포함
+      window.location.href = `main.html?category=${category}`;
+  });
+});
+
+// URL에서 카테고리 파라미터 읽기
+function getCategoryFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('category') || 'all'; // 기본값은 'all'
+}
+
+// 페이지 로드 시 카테고리 필터 적용
+window.addEventListener('load', () => {
+  const selectedCategory = getCategoryFromURL();
+  filterPosts(selectedCategory); // 기존 filterPosts 함수 재사용
+});
+
+// 투표 옵션에 이벤트 리스너 추가 (checkbox와 radio 모두 처리)
 const pollOptions = document.querySelectorAll('.poll-option');
 
 pollOptions.forEach(option => {
-  const checkbox = option.querySelector('input[type="checkbox"]');
-  checkbox.addEventListener('change', () => {
-    if (checkbox.checked) {
+  const input = option.querySelector('input[type="checkbox"], input[type="radio"]');
+  input.addEventListener('change', () => {
+    const isRadio = input.type === 'radio'; // 여기서 isRadio 변수 정의
+    if (input.checked) {
       option.classList.add('checked');
+      if (isRadio) {
+        // 라디오 버튼인 경우, 동일한 그룹의 다른 옵션을 해제
+        const name = input.name;
+        const inputsInGroup = document.querySelectorAll(`input[name="${name}"]`);
+        inputsInGroup.forEach(otherInput => {
+          if (otherInput !== input) {
+            otherInput.checked = false;
+            const otherOption = otherInput.closest('.poll-option');
+            otherOption.classList.remove('checked');
+          }
+        });
+      }
     } else {
       option.classList.remove('checked');
     }
@@ -125,16 +173,25 @@ document.querySelectorAll('button.vote-button').forEach(voteButton => {
   voteButton.addEventListener('click', () => {
     const postId = voteButton.getAttribute('data-post-id');
     const poll = voteButton.closest('.poll');
-    const pollOptions = poll.querySelectorAll('input[type="checkbox"]');
+    const pollOptions = poll.querySelectorAll('input[type="checkbox"], input[type="radio"]');
+    const isMultipleChoice = poll.getAttribute('data-multiple-choice') === 'true';
 
     // 체크된 항목이 있는지 확인
     const selectedOptions = Array.from(pollOptions)
-      .filter(checkbox => checkbox.checked)
-      .map(checkbox => checkbox.value);
+      .filter(input => input.checked)
+      .map(input => input.value);
 
     if (selectedOptions.length > 0) {
+      // 기존의 투표 데이터를 로드
+      let voteData = JSON.parse(localStorage.getItem(`vote-${postId}`)) || {};
+
+      // 각 항목별 투표 수 업데이트
+      selectedOptions.forEach(option => {
+        voteData[option] = (voteData[option] || 0) + 1;
+      });
+
       // 투표 결과 저장
-      localStorage.setItem(`vote-${postId}`, JSON.stringify(selectedOptions));
+      localStorage.setItem(`vote-${postId}`, JSON.stringify(voteData));
 
       alert('투표가 완료되었습니다!');
 
@@ -186,4 +243,124 @@ window.addEventListener('load', () => {
   if (!popup.classList.contains('hidden')) {
     popup.classList.add('hidden');
   }
+});
+
+// 투표 결과 로드 및 UI 업데이트 함수 수정
+function loadVotes() {
+  document.querySelectorAll('.poll').forEach(poll => {
+    const postId = poll.getAttribute('data-post-id');
+    const voteData = JSON.parse(localStorage.getItem(`vote-${postId}`));
+
+    if (voteData) {
+      const voteButton = poll.querySelector('button.vote-button');
+      const pollOptions = poll.querySelectorAll('.poll-option');
+
+      voteButton.disabled = true;
+      voteButton.textContent = '이미 투표한 게시글입니다';
+
+      // poll-option 업데이트
+      pollOptions.forEach(option => {
+        const input = option.querySelector('input[type="checkbox"], input[type="radio"]');
+        input.disabled = true;
+        option.classList.add('disabled');
+
+        const optionValue = input.value;
+        const voteCount = voteData[optionValue] || 0;
+
+        // 투표 수를 표시할 span 추가
+        let voteCountSpan = option.querySelector('.vote-count');
+        if (!voteCountSpan) {
+          voteCountSpan = document.createElement('span');
+          voteCountSpan.className = 'vote-count';
+          voteCountSpan.style.marginRight = '10px';
+          voteCountSpan.style.fontSize = '14px';
+          voteCountSpan.style.color = '#555';
+          // 이미지 요소를 선택
+          const imageElement = option.querySelector('img');
+          // 투표 수를 이미지 왼쪽에 삽입
+          option.insertBefore(voteCountSpan, imageElement);
+        }
+        voteCountSpan.textContent = `(${voteCount}표)`;
+      });
+    }
+  });
+}
+
+function updateVoteUI(postId) {
+  const poll = document.querySelector(`.poll[data-post-id="${postId}"]`);
+  const voteButton = poll.querySelector('button.vote-button');
+  const pollOptions = poll.querySelectorAll('.poll-option');
+
+  const voteData = JSON.parse(localStorage.getItem(`vote-${postId}`));
+
+  if (voteData) {
+    voteButton.disabled = true;
+    voteButton.textContent = '이미 투표한 게시글입니다';
+
+    pollOptions.forEach(option => {
+      const input = option.querySelector('input[type="checkbox"], input[type="radio"]');
+      input.disabled = true;
+      option.classList.add('disabled');
+
+      const optionValue = input.value;
+      const voteCount = voteData[optionValue] || 0;
+
+      // 투표 수를 표시할 span 추가
+      let voteCountSpan = option.querySelector('.vote-count');
+      if (!voteCountSpan) {
+        voteCountSpan = document.createElement('span');
+        voteCountSpan.className = 'vote-count';
+        voteCountSpan.style.marginRight = '10px';
+        voteCountSpan.style.fontSize = '14px';
+        voteCountSpan.style.color = '#555';
+        // 이미지 요소를 선택
+        const imageElement = option.querySelector('img');
+        // 투표 수를 이미지 왼쪽에 삽입
+        option.insertBefore(voteCountSpan, imageElement);
+      }
+      voteCountSpan.textContent = `(${voteCount}표)`;
+    });
+  }
+}
+
+// 페이지 로드 시 투표 결과 로드
+window.addEventListener('load', () => {
+  loadVotes();
+});
+
+// 댓글 수를 업데이트하는 함수
+function updateCommentCount() {
+  const commentList = document.getElementById('comment-list');
+  const commentCountElement = document.querySelector('.comment-count');
+  const commentCount = commentList.children.length; // 댓글 목록의 자식 수 계산
+  commentCountElement.textContent = `댓글 ${commentCount}`;
+}
+
+// 댓글 추가 로직 수정
+const addCommentButton = document.getElementById('add-comment-button');
+const commentInput = document.getElementById('comment-input');
+const commentList = document.getElementById('comment-list');
+
+addCommentButton.addEventListener('click', () => {
+  const commentText = commentInput.value.trim();
+  if (commentText) {
+      const newComment = document.createElement('li');
+      newComment.innerHTML = `
+          <div class="comment-header">
+            <img src="circle.png" alt="프로필" class="profile-pic">
+            익명
+          </div>
+          <p>${commentText}</p>
+      `;
+      commentList.appendChild(newComment);
+      commentInput.value = '';
+      updateCommentCount(); // 댓글 수 업데이트
+  } else {
+      alert('댓글을 입력하세요.');
+  }
+});
+
+// 페이지 로드 시 초기 댓글 수 설정
+window.addEventListener('load', () => {
+  updateCommentCount();
 });

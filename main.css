@@ -23,6 +23,12 @@ header {
   background-color: #D9D9D9; /* 선의 색상 설정 */
 }
 
+.comment-hr {
+  height: 1px; /* 선의 두께 설정 */
+  border: none; /* 기본 테두리 제거 */
+  background-color: #B3B3B3; /* 선의 색상 설정 */
+}
+
 .up {
   position: absolute; /* 위치를 절대값으로 설정 */
   top: 25px; /* 헤더 상단에서 10px 떨어지도록 설정 */
@@ -66,6 +72,7 @@ header {
   overflow-x: hidden; /* 좌우 스크롤 비활성화 */
   z-index: 20;
 }
+
 .alert-item img {
   width: 30px; /* 이미지 크기 */
   height: 30px; /* 이미지 크기 */
@@ -134,6 +141,23 @@ li {
 a {
   color: inherit; /* 부모 엘리먼트의 값을 물려받는다 */
   text-decoration: none; /* 해당 태그의 text-decoration 속성을 none 값으로 하는 것으로 밑줄을 제거한다 */
+}
+
+.floating-button {
+  position: fixed; /* 화면에 고정 */
+  bottom: 30px; /* 화면 아래에서 20px 위 */
+  right: 30px; /* 화면 오른쪽에서 20px 왼쪽 */
+  display: flex; /* 내용물 가운데 정렬 */
+  justify-content: center;
+  align-items: center;
+  z-index: 100; /* 다른 요소 위에 표시 */
+  cursor: pointer; /* 클릭 가능 */
+}
+
+.floating-button img {
+  width: 80px; /* 이미지 크기 고정 */
+  height: 80px;
+  object-fit: cover; /* 이미지를 잘리지 않게 표시 */
 }
 
 .content {
@@ -246,7 +270,7 @@ h2 {
 
 .poll-option.checked {
   background-color: #e8f5e9; /* 체크된 상태의 배경색 */
-  border-color: #91c788; /* 체크된 상태의 테두리 색상 */
+  border: 3px solid #91c788; /* 테두리 추가 */
 }
 
 .poll-option:hover {
@@ -254,8 +278,11 @@ h2 {
   border-color: #91c788; /* 호버 시 테두리 색 변경 */
 }
 
-.poll-option input[type="checkbox"] {
-  display: none; /* 체크박스 숨기기 */
+.poll-option input[type="checkbox"],
+.poll-option input[type="radio"] {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
 }
 
 .poll-option span {
@@ -266,6 +293,36 @@ h2 {
 .poll-option img {
   width: 25px; /* 이미지 크기 */
   height: 25px;
+  pointer-events: auto; /* 이미지 클릭 가능 */
+  cursor: pointer; /* 마우스 포인터 표시 */
+}
+
+/* 이미 투표 완료된 버튼 */
+.vote-button:disabled {
+  background-color: #cccccc; /* 비활성화된 버튼 색상 */
+  color: #ffffff; /* 텍스트 색상 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+}
+
+.vote-button:disabled:hover {
+  background-color: #cccccc; /* hover 시에도 색상 유지 */
+}
+
+/* 비활성화된 poll-option 스타일 */
+.poll-option.disabled {
+  background-color: #e0e0e0; /* 비활성화된 배경색 */
+  cursor: not-allowed; /* 클릭 불가 커서 */
+  pointer-events: none; /* 클릭 및 hover 이벤트 비활성화 */
+}
+
+.poll-option.disabled:hover {
+  background-color: #e0e0e0; /* hover 시에도 색상 유지 */
+}
+
+.vote-count {
+  margin-left: 10px; /* 항목과 간격 */
+  font-size: 14px;
+  color: #555;
 }
 
 #image-popup {
@@ -339,22 +396,45 @@ h2 {
 
 /* 작은 화면 (예: 모바일) */
 @media (max-width: 768px) {
+  body {
+    flex-direction: column;
+  }
+
   .side {
-    width: 100%; /* 사이드바를 화면 전체로 확장 */
-    position: relative; /* 고정된 위치 해제 */
+    width: 100%;
+    position: relative;
     top: 0;
-    height: auto; /* 높이를 자동으로 조정 */
-    box-shadow: none; /* 그림자 제거 */
+    height: auto;
+    box-shadow: none;
+    order: 1;
+    margin: 0;
   }
 
   .content {
-    margin-left: 15%; /* 왼쪽 여백 제거 */
-    max-width: 100%; /* 콘텐츠가 화면 너비에 맞게 확장 */
-    padding: 10px; /* 내부 여백 축소 */
+    margin-left: 0;
+    margin-right: 30px; 
+    max-width: 100%; /* 콘텐츠가 전체 너비를 차지 */
+    padding: 10px;
+    order: 2;
   }
 
   .post {
-    padding: 15px; /* 내부 여백 축소 */
+    width: 100%; /* 게시글이 부모 요소의 너비를 완전히 차지 */
+    max-width: none; /* max-width 제한 해제 */
+    padding: 10px 15px;
+    margin: 15px 0px;
+  }
+}
+
+/* 중간 화면 (768px ~ 1023px) */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .side {
+    width: 20%;
+  }
+
+  .content {
+    margin-left: 22%; /* 사이드바 너비에 따라 조정 */
+    max-width: 80%;
   }
 }
 
@@ -363,4 +443,71 @@ h2 {
   .content {
     max-width: 1200px; /* 더 넓은 화면에서는 최대 너비를 확장 */
   }
+}
+
+#comment-section {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #ddead1; /* 연한 녹색 */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.comment-count {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+#comment-list li {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: flex-start; /* 왼쪽 정렬 */
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #ddead1; /* 연한 녹색 */
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#comment-list li .comment-header {
+  display: flex;
+  align-items: center; /* 이미지와 이름 가로 정렬 */
+  margin-bottom: 5px; /* 내용과의 간격 */
+}
+
+#comment-list li b {
+  font-size: 16px;
+}
+
+#comment-list li p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  margin-left: 50px; /* 내용이 이름 밑으로 정렬되도록 여백 추가 */
+}
+
+#comment-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-top: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+}
+
+#add-comment-button {
+  margin-top: 5px;
+  padding: 10px 20px;
+  background-color: #658354;
+  color: white;
+  border: 1px solid #658354;
+  border-radius: 10px;
+  cursor: pointer;
+  display: block;
+}
+
+#add-comment-button:hover {
+  background-color: #87ab69;
 }
