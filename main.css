@@ -23,6 +23,12 @@ header {
   background-color: #D9D9D9; /* 선의 색상 설정 */
 }
 
+.comment-hr {
+  height: 1px; /* 선의 두께 설정 */
+  border: none; /* 기본 테두리 제거 */
+  background-color: #B3B3B3; /* 선의 색상 설정 */
+}
+
 .up {
   position: absolute; /* 위치를 절대값으로 설정 */
   top: 25px; /* 헤더 상단에서 10px 떨어지도록 설정 */
@@ -66,6 +72,7 @@ header {
   overflow-x: hidden; /* 좌우 스크롤 비활성화 */
   z-index: 20;
 }
+
 .alert-item img {
   width: 30px; /* 이미지 크기 */
   height: 30px; /* 이미지 크기 */
@@ -387,7 +394,6 @@ h2 {
   cursor: pointer; /* 클릭 가능하도록 설정 */
 }
 
-
 /* 작은 화면 (예: 모바일) */
 @media (max-width: 768px) {
   body {
@@ -437,4 +443,71 @@ h2 {
   .content {
     max-width: 1200px; /* 더 넓은 화면에서는 최대 너비를 확장 */
   }
+}
+
+#comment-section {
+  margin-top: 30px;
+  padding: 20px;
+  background-color: #ddead1; /* 연한 녹색 */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-family: Arial, sans-serif;
+}
+
+.comment-count {
+  font-size: 18px;
+  margin-bottom: 15px;
+}
+
+#comment-list li {
+  display: flex;
+  flex-direction: column; /* 세로 정렬 */
+  align-items: flex-start; /* 왼쪽 정렬 */
+  margin-bottom: 15px;
+  padding: 10px;
+  background-color: #ddead1; /* 연한 녹색 */
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#comment-list li .comment-header {
+  display: flex;
+  align-items: center; /* 이미지와 이름 가로 정렬 */
+  margin-bottom: 5px; /* 내용과의 간격 */
+}
+
+#comment-list li b {
+  font-size: 16px;
+}
+
+#comment-list li p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  margin-left: 50px; /* 내용이 이름 밑으로 정렬되도록 여백 추가 */
+}
+
+#comment-input {
+  width: calc(100% - 20px);
+  padding: 10px;
+  margin-top: 15px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  font-size: 14px;
+  background-color: #f9f9f9;
+}
+
+#add-comment-button {
+  margin-top: 5px;
+  padding: 10px 20px;
+  background-color: #658354;
+  color: white;
+  border: 1px solid #658354;
+  border-radius: 10px;
+  cursor: pointer;
+  display: block;
+}
+
+#add-comment-button:hover {
+  background-color: #87ab69;
 }

@@ -83,6 +83,28 @@ function filterPosts(category) {
   });
 }
 
+// 사이드바 카테고리 클릭 이벤트
+document.querySelectorAll('.side ul li a').forEach(link => {
+  link.addEventListener('click', (event) => {
+      event.preventDefault(); // 기본 링크 동작 방지
+      const category = link.getAttribute('data-category');
+      // main.html로 이동하면서 카테고리를 URL에 포함
+      window.location.href = `main.html?category=${category}`;
+  });
+});
+
+// URL에서 카테고리 파라미터 읽기
+function getCategoryFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get('category') || 'all'; // 기본값은 'all'
+}
+
+// 페이지 로드 시 카테고리 필터 적용
+window.addEventListener('load', () => {
+  const selectedCategory = getCategoryFromURL();
+  filterPosts(selectedCategory); // 기존 filterPosts 함수 재사용
+});
+
 // 투표 옵션에 이벤트 리스너 추가 (checkbox와 radio 모두 처리)
 const pollOptions = document.querySelectorAll('.poll-option');
 
@@ -304,4 +326,41 @@ function updateVoteUI(postId) {
 // 페이지 로드 시 투표 결과 로드
 window.addEventListener('load', () => {
   loadVotes();
+});
+
+// 댓글 수를 업데이트하는 함수
+function updateCommentCount() {
+  const commentList = document.getElementById('comment-list');
+  const commentCountElement = document.querySelector('.comment-count');
+  const commentCount = commentList.children.length; // 댓글 목록의 자식 수 계산
+  commentCountElement.textContent = `댓글 ${commentCount}`;
+}
+
+// 댓글 추가 로직 수정
+const addCommentButton = document.getElementById('add-comment-button');
+const commentInput = document.getElementById('comment-input');
+const commentList = document.getElementById('comment-list');
+
+addCommentButton.addEventListener('click', () => {
+  const commentText = commentInput.value.trim();
+  if (commentText) {
+      const newComment = document.createElement('li');
+      newComment.innerHTML = `
+          <div class="comment-header">
+            <img src="circle.png" alt="프로필" class="profile-pic">
+            익명
+          </div>
+          <p>${commentText}</p>
+      `;
+      commentList.appendChild(newComment);
+      commentInput.value = '';
+      updateCommentCount(); // 댓글 수 업데이트
+  } else {
+      alert('댓글을 입력하세요.');
+  }
+});
+
+// 페이지 로드 시 초기 댓글 수 설정
+window.addEventListener('load', () => {
+  updateCommentCount();
 });
