@@ -12,7 +12,7 @@
     try {
         Class.forName("com.mysql.jdbc.Driver");
         Connection conn = DriverManager.getConnection(url, dbUser, dbPassword);
-        PreparedStatement pstmt = conn.prepareStatement("SELECT id FROM compare_mate WHERE email = ?");
+        PreparedStatement pstmt = conn.prepareStatement("SELECT id FROM users WHERE email = ?");
         pstmt.setString(1, email);
         ResultSet rs = pstmt.executeQuery();
 

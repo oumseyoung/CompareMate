@@ -21,10 +21,10 @@
             // JDBC 드라이버 로드
             Class.forName("com.mysql.cj.jdbc.Driver");
             // 데이터베이스 연결
-            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/compare_mate", "lee", "lee1202");
+            Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/compare_mate", "root", "0000");
             
             // 아이디 중복 확인
-            String checkSql = "SELECT COUNT(*) FROM compare_mate WHERE id = ?";
+            String checkSql = "SELECT COUNT(*) FROM users WHERE id = ?";
             PreparedStatement checkPstmt = conn.prepareStatement(checkSql);
             checkPstmt.setString(1, id);
             ResultSet rs = checkPstmt.executeQuery();
@@ -32,7 +32,7 @@
                 jsonResponse = "{\"status\":\"error\",\"message\":\"이미 사용 중인 아이디입니다.\"}";
             } else {
                 // 사용자 정보 삽입
-                String insertSql = "INSERT INTO compare_mate (id, email, password, nickname) VALUES (?, ?, ?, ?)";
+                String insertSql = "INSERT INTO users (id, email, password, nickname) VALUES (?, ?, ?, ?)";
                 PreparedStatement insertPstmt = conn.prepareStatement(insertSql);
                 insertPstmt.setString(1, id);
                 insertPstmt.setString(2, email);

@@ -3,9 +3,17 @@
 <%@page import="java.util.*"%>
 <%
     // 데이터베이스 연결 정보
-    String dbUrl = "jdbc:mysql://localhost:3306/practice_board?serverTimezone=UTC";
+    String dbUrl = "jdbc:mysql://localhost:3306/compare_mate?serverTimezone=UTC";
     String dbUser = "root";	
     String dbPassword = "0000";
+
+    // 세션에서 user_id 가져오기
+    String userId = (String) session.getAttribute("userId");
+    if (userId == null) {
+        // 로그인되지 않은 경우 처리 (예: 로그인 페이지로 리다이렉트)
+        response.sendRedirect("login.jsp");
+        return;
+    }
 
     // 요청 데이터 가져오기
     request.setCharacterEncoding("UTF-8");
@@ -13,7 +21,8 @@
     String title = request.getParameter("title");
     String content = request.getParameter("content");
     String[] pollOptions = request.getParameterValues("pollOption[]");
-    String[] pollImages = request.getParameterValues("pollImage[]");
+    // 파일 업로드는 별도의 처리 필요 (현재는 이미지 URL로 가정)
+    // String[] pollImages = request.getParameterValues("pollImage[]"); // 파일 업로드 구현 시 추가
     boolean multiSelect = request.getParameter("multiSelect") != null;
     boolean notify = request.getParameter("notify") != null;
     String endDate = request.getParameter("endDate");
@@ -50,27 +59,28 @@
         // 트랜잭션 처리 시작
         conn.setAutoCommit(false);
 
-        // `posts` 테이블에 데이터 삽입
-        String insertPostQuery = "INSERT INTO posts (category, title, content, multi_select, end_date, end_time, notify) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        // `posts` 테이블에 데이터 삽입 (user_id 포함)
+        String insertPostQuery = "INSERT INTO posts (user_id, category, title, content, multi_select, end_date, end_time, notify) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         postStmt = conn.prepareStatement(insertPostQuery, Statement.RETURN_GENERATED_KEYS);
-        postStmt.setString(1, category);
-        postStmt.setString(2, title);
-        postStmt.setString(3, content);
-        postStmt.setBoolean(4, multiSelect);
+        postStmt.setString(1, userId); // user_id 설정
+        postStmt.setString(2, category);
+        postStmt.setString(3, title);
+        postStmt.setString(4, content);
+        postStmt.setBoolean(5, multiSelect);
 
         if (sqlEndDate != null) {
-            postStmt.setDate(5, sqlEndDate);
+            postStmt.setDate(6, sqlEndDate);
         } else {
-            postStmt.setNull(5, java.sql.Types.DATE);
+            postStmt.setNull(6, java.sql.Types.DATE);
         }
 
         if (sqlEndTime != null) {
-            postStmt.setTime(6, sqlEndTime);
+            postStmt.setTime(7, sqlEndTime);
         } else {
-            postStmt.setNull(6, java.sql.Types.TIME);
+            postStmt.setNull(7, java.sql.Types.TIME);
         }
 
-        postStmt.setBoolean(7, notify);
+        postStmt.setBoolean(8, notify);
         postStmt.executeUpdate();
 
         // 생성된 게시글 ID 가져오기
@@ -78,6 +88,8 @@
         int postId = 0;
         if (generatedKeys.next()) {
             postId = generatedKeys.getInt(1);
+        } else {
+            throw new SQLException("게시글 ID를 가져오지 못했습니다.");
         }
 
         // 투표 옵션 삽입
@@ -87,7 +99,8 @@
 
             for (int i = 0; i < pollOptions.length; i++) {
                 String optionText = pollOptions[i];
-                String optionImage = (pollImages != null && pollImages.length > i) ? pollImages[i] : null;
+                // 이미지 업로드 처리 시 image_url 설정
+                String optionImage = null; // 현재는 이미지 업로드 미구현
 
                 if (optionText != null && !optionText.trim().isEmpty()) {
                     pollStmt.setInt(1, postId);
@@ -102,8 +115,8 @@
         // 트랜잭션 커밋
         conn.commit();
 
-        // 성공 시 목록 페이지로 리다이렉트
-        response.sendRedirect("post_list.jsp");
+        // 성공 시 메인 페이지로 리다이렉트
+        response.sendRedirect("main.jsp");
     } catch (Exception e) {
         if (conn != null) conn.rollback(); // 오류 발생 시 롤백
         out.println("오류 발생: " + e.getMessage());

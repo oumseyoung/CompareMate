@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="login.css" />
 </head>
 <body>
-    <img src="icon.png" alt="CM" />
+    <a href="main.jsp"><img src="icon.png" alt="CM" id="CM" /></a>
     <hr />
     <div class="content">
         <h2>Compare Mate</h2>
@@ -42,12 +42,16 @@
             xhr.open("POST", "loginProcess.jsp", true);
             xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
             xhr.onreadystatechange = function () {
-                if (xhr.readyState === 4 && xhr.status === 200) {
-                    if (xhr.responseText.trim() === "success") {
-                        alert("로그인 성공!");
-                        window.location.href = "home.jsp"; // 로그인 후 이동할 페이지
+                if (xhr.readyState === 4) {
+                    if (xhr.status === 200) {
+                        if (xhr.responseText.trim() === "success") {
+                            alert("로그인 성공!");
+                            window.location.href = "main.jsp"; // 로그인 후 이동할 페이지
+                        } else {
+                            alert("아이디 또는 비밀번호가 잘못되었습니다.");
+                        }
                     } else {
-                        alert("아이디 또는 비밀번호가 잘못되었습니다.");
+                        alert("로그인 요청 중 오류가 발생했습니다.");
                     }
                 }
             };

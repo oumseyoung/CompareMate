@@ -7,7 +7,7 @@
     try {
         // JDBC 연결 설정
         Class.forName("com.mysql.cj.jdbc.Driver");
-        String db_address = "jdbc:mysql://localhost:3306/practice_board?serverTimezone=UTC";
+        String db_address = "jdbc:mysql://localhost:3306/compare_mate?serverTimezone=UTC";
         String db_username = "root";
         String db_pwd = "0000";
         connection = DriverManager.getConnection(db_address, db_username, db_pwd);
