@@ -147,7 +147,7 @@ document.addEventListener("DOMContentLoaded", () => {
 const popup = document.getElementById("image-popup");
 const popupImage = document.getElementById("popup-image");
 const closePopupButton = document.getElementById("close-popup");
-const clickableImages = document.querySelectorAll(".clickable-image");
+const clickableImages = document.querySelectorAll('.poll-option img');
 
 // 이미지 클릭 시 팝업 표시
 clickableImages.forEach((image) => {

@@ -377,26 +377,45 @@ h2 {
   display: none; /* 체크박스 숨기기 */
 }
 
+.bookmark {
+  position: relative; /* 부모 기준으로 위치 조정 */
+}
+
 .bookmark-icon {
-  position: absolute;
   top: 20px;
   right: 20px;
   cursor: pointer; /* 선택 사항: 호버 시 포인터로 변경 */
 }
 
 .menu-icon {
+  top: 20px;
+  right: 20px;
   cursor: pointer;
+}
+
+.menu-bookmark {
+  position: absolute;
+  top: 20px; /* 게시글 상단에서 거리 */
+  right: 20px; /* 게시글 오른쪽에서 거리 */
+  display: flex;
+  flex-direction: column; /* 아이템을 위아래로 정렬 */
+  align-items: center; /* 수평 가운데 정렬 */
+  gap: 8px; /* 메뉴와 북마크 간격 */
 }
 
 .menu-popup {
   position: absolute;
-  top: 56%; /* 메뉴 이미지 기준으로 아래에 위치 */
-  right: 3%;
-  background-color: white;
-  border: 1px solid black;
-  border-radius: 5px;
-  flex-direction: column;
+  top: 40px; /* 버튼 바로 아래 */
+  right: 0;
+  background-color: #ffffff; /* 흰색 배경 */
+  border: 1px solid #e0e0e0; /* 연한 회색 테두리 */
+  border-radius: 10px; /* 둥근 모서리 */
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1); /* 가벼운 그림자 효과 */
   display: flex;
+  flex-direction: column;
+  width: 150px; /* 적당한 너비 */
+  z-index: 100; /* 다른 요소 위에 표시 */
+  padding: 10px 0; /* 내부 여백 */
 }
 
 .menu-popup.hidden {
@@ -404,12 +423,40 @@ h2 {
 }
 
 .menu-popup button {
-  color: black;
+  background-color: transparent; /* 투명 배경 */
+  color: #333333; /* 텍스트 색상 */
+  border: none; /* 버튼 테두리 제거 */
+  padding: 10px 15px; /* 내부 여백 */
+  text-align: left; /* 텍스트를 왼쪽 정렬 */
+  font-size: 14px; /* 글씨 크기 */
+  cursor: pointer; /* 클릭 가능한 커서 */
+  transition: background-color 0.2s; /* 호버 시 부드러운 배경색 전환 */
+}
+
+.menu-popup button:hover {
+  background-color: #f5f5f5; /* 호버 시 배경색 */
+}
+
+.menu-popup button:first-child {
+  border-top-left-radius: 10px; /* 첫 번째 버튼 모서리 둥글게 */
+  border-top-right-radius: 10px;
+}
+
+.menu-popup button:last-child {
+  border-bottom-left-radius: 10px; /* 마지막 버튼 모서리 둥글게 */
+  border-bottom-right-radius: 10px;
+}
+
+.share-post-btn {
+  background-color: #f0f0f0;
+  color: #333;
   border: none;
-  padding: 5px 10px;
+  padding: 10px 15px;
   cursor: pointer;
-  border-radius: 3px;
-  font-size: 14px;
+  transition: background-color 0.3s;
+}
+.share-post-btn:hover {
+  background-color: #e0e0e0;
 }
 
 #image-popup {
