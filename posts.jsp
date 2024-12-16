@@ -5,7 +5,7 @@
 
 <%
     // 데이터베이스 연결 정보
-    String DB_URL = "jdbc:mysql://localhost:3306/compare_mate?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
+    String DB_URL = "jdbc:mysql://localhost:3306/compare_mate?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
     String DB_USERNAME = "root";
     String DB_PASSWORD = "0000";
 
@@ -27,11 +27,12 @@
         while (postRs.next()) {
             int postId = postRs.getInt("post_id");
             String userIdFromDB = postRs.getString("user_id");
-            String title = postRs.getString("title");
-            String content = postRs.getString("content");
-            String category = postRs.getString("category");
+            String title = postRs.getString("title") != null ? postRs.getString("title") : "";
+            String content = postRs.getString("content") != null ? postRs.getString("content") : "";
+            String category = postRs.getString("category") != null ? postRs.getString("category") : "";
             boolean multiSelect = postRs.getBoolean("multi_select");
             Timestamp regDate = postRs.getTimestamp("reg_date");
+            boolean notify = postRs.getBoolean("notify");
             Date endDate = postRs.getDate("end_date");
             Time endTime = postRs.getTime("end_time");
 
@@ -83,15 +84,60 @@
 
 <!-- 게시글 -->
 <div class="post" data-category="<%= category %>" data-post-id="<%= postId %>">
-    <script>
-        var postData_<%= postId %> = {
-            postId: <%= postId %>,
-            endDate: "<%= (endDate != null) ? endDate.toString() : "" %>",
-            endTime: "<%= (endTime != null) ? endTime.toString() : "" %>",
-            multiSelect: <%= multiSelect %>,
-            isVotingOpen: <%= isVotingOpen %>
-        };
-    </script>
+<script>
+    // 투표 종료 알림
+    if (postData_<%= postId %>.notify === "true" && postData_<%= postId %>.endDate && postData_<%= postId %>.endTime) {
+        const endDateTime = new Date(postData_<%= postId %>.endDate + 'T' + postData_<%= postId %>.endTime);
+        const currentTime = new Date();
+
+        if (endDateTime > currentTime) {
+            const timeDifference = endDateTime - currentTime;
+
+            setTimeout(() => {
+                addAlert("투표가 종료되었습니다!", "circle.png");
+            }, timeDifference);
+        }
+    }
+
+    // 댓글 추가 시 알림
+    document.addEventListener("DOMContentLoaded", function() {
+    const commentButton = document.querySelector(".add-comment-button[data-post-id='<%= postId %>']");
+
+    if (commentButton) {
+        commentButton.addEventListener("click", function() {
+            const commentInput = document.getElementById("comment-input-<%= postId %>");
+            const commentText = commentInput.value.trim();
+
+            if (commentText) {
+                // 서버에 댓글 추가 요청 (AJAX 요청으로 구현)
+                const formData = new FormData();
+                formData.append("postId", <%= postId %>);
+                formData.append("comment", commentText);
+
+                fetch("add_comment.jsp", {
+                    method: "POST",
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(result => {
+                    if (result.status === "success") {
+                        alert("댓글이 추가되었습니다.");
+                        location.reload(); // 알림 및 댓글 새로고침
+                    } else {
+                        alert("댓글 추가에 실패했습니다.");
+                    }
+                });
+            } else {
+                alert("댓글을 입력하세요.");
+            }
+        });
+    }
+});
+
+</script>
+
+
+
     <a href="#" class="post-link">
         <div class="bookmark">
             <input type="checkbox" id="bookmark-<%= postId %>" class="bookmark-checkbox" />
@@ -111,7 +157,7 @@
             </a>
             <div>
                 <span class="username"><%= userIdFromDB %></span>
-                <span class="date"><%= regDate.toString() %></span>
+                <span class="date"><%= (regDate != null) ? regDate.toString() : "" %></span>
             </div>
         </div>
         <p><%= content %></p>
@@ -181,7 +227,10 @@
     <p id="comment-text-<%= commentRs.getInt("comment_id") %>"><%= commentText %></p>
 
     <!-- 수정/삭제 링크: 본인 아이디만 보이게 설정 -->
-    <% if (commentUserId.equals(session.getAttribute("userId"))) { %>
+<%
+    String sessionUserId = (String) session.getAttribute("userId");
+    if (sessionUserId != null && commentUserId.equals(sessionUserId)) { 
+%>
         <div class="comment-actions">
             <a href="#" class="edit-comment" data-comment-id="<%= commentRs.getInt("comment_id") %>">수정</a> |
             <a href="#" class="delete-comment" data-comment-id="<%= commentRs.getInt("comment_id") %>">삭제</a>
@@ -211,6 +260,7 @@
         conn.close();
     } catch (Exception e) {
         e.printStackTrace();
+        out.println("데이터베이스 오류 발생: " + e.getMessage());
     } finally {
         if (optionRs != null) try { optionRs.close(); } catch (SQLException ignore) {}
         if (optionStmt != null) try { optionStmt.close(); } catch (SQLException ignore) {}

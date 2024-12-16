@@ -18,8 +18,11 @@
 
     if (postId != null && commentText != null && userId != null) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD)) {
-            String query = "INSERT INTO comments (post_id, user_id, comment_text, comment_date) VALUES (?, ?, ?, NOW())";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            conn.setAutoCommit(false); // 트랜잭션 시작
+
+            // 댓글 추가
+            String commentQuery = "INSERT INTO comments (post_id, user_id, comment_text, comment_date) VALUES (?, ?, ?, NOW())";
+            try (PreparedStatement stmt = conn.prepareStatement(commentQuery)) {
                 stmt.setInt(1, Integer.parseInt(postId));
                 stmt.setString(2, userId);
                 stmt.setString(3, commentText);
@@ -33,9 +36,40 @@
                         "{\"userId\":\"%s\", \"commentText\":\"%s\", \"commentDate\":\"%s\"}",
                         userId, commentText, commentDate
                     );
+
+                    // 게시글 작성자 ID 가져오기
+                    String postOwner = null;
+                    String postTitle = null;
+                    String ownerQuery = "SELECT user_id, title FROM posts WHERE post_id = ?";
+                    try (PreparedStatement ownerStmt = conn.prepareStatement(ownerQuery)) {
+                        ownerStmt.setInt(1, Integer.parseInt(postId));
+                        try (ResultSet rs = ownerStmt.executeQuery()) {
+                            if (rs.next()) {
+                                postOwner = rs.getString("user_id");
+                                postTitle = rs.getString("title");
+                            }
+                        }
+                    }
+
+                    // 알림 추가: 동일한 user_id, post_id에 대해 새로운 알림을 추가
+                    if (postOwner != null && !postOwner.equals(userId)) { // 본인의 게시물에 댓글을 단 경우 제외
+                        String alertQuery = "INSERT INTO alerts (user_id, message, post_id, created_at) VALUES (?, ?, ?, NOW())";
+                        try (PreparedStatement alertStmt = conn.prepareStatement(alertQuery)) {
+                            String alertMessage = String.format("게시글 '%s'에 댓글이 추가되었습니다.", postTitle);
+                            alertStmt.setString(1, postOwner);
+                            alertStmt.setString(2, alertMessage);
+                            alertStmt.setInt(3, Integer.parseInt(postId));
+                            alertStmt.executeUpdate();
+                        }
+                    }
+
+                    conn.commit(); // 트랜잭션 커밋
                 } else {
                     message = "댓글 추가에 실패했습니다.";
                 }
+            } catch (Exception e) {
+                conn.rollback(); // 오류 발생 시 롤백
+                throw e;
             }
         } catch (Exception e) {
             e.printStackTrace();

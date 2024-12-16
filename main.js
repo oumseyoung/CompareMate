@@ -14,7 +14,7 @@ function addAlert(message, imageUrl) {
             <img src="${imageUrl}" alt="프로필" style="width: 30px; height: 30px; border-radius: 50%; margin-left: 5px;" />
             <div style="margin-left: 10px;">
                 <span style="font-size: 15px; font-weight: bold; display: block;">${message}</span>
-                <span style="color: gray; font-size: 12px;">게시글 제목</span>
+                <span style="color: gray; font-size: 12px;">투표 종료 알림</span>
             </div>
         </a>
     `;
@@ -25,19 +25,25 @@ function addAlert(message, imageUrl) {
 // 알람 비우기
 function clearAlerts() {
     const alertList = document.getElementById("alert-list");
-    alertList.innerHTML = ""; // 알람 목록을 비움
+
+    // 서버에 알림 삭제 요청
+    fetch("clear_alerts.jsp", {
+        method: "POST",
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status === "success") {
+                alertList.innerHTML = ""; // 클라이언트에서 알림 목록 비우기
+                console.log(data.message);
+            } else {
+                console.error(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("알림 삭제 중 오류 발생:", error);
+        });
 }
 
-// 5초마다 무작위 알람 추가
-setInterval(() => {
-    const messages = [
-        { text: "게시물에 댓글이 달렸습니다.", image: "circle.png" },
-        { text: "투표가 종료되었습니다.", image: "circle.png" },
-    ];
-
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    addAlert(randomMessage.text, randomMessage.image);
-}, 5000);
 
 // 카테고리 필터링
 const categoryLinks = document.querySelectorAll('.side ul li a');
@@ -389,6 +395,65 @@ document.addEventListener("click", (event) => {
 
         commentTextElement.replaceWith(inputField);
         inputField.after(saveButton);
+
+        saveButton.addEventListener("click", () => {
+            const updatedText = inputField.value.trim();
+            if (updatedText === "") {
+                alert("댓글을 입력해주세요.");
+                return;
+            }
+
+            // 서버로 수정 요청
+            fetch("edit_comment.jsp", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `comment_id=${commentId}&comment_text=${encodeURIComponent(updatedText)}`
+            })
+            .then(response => response.json()) // 서버 응답 JSON 처리
+            .then(data => {
+                if (data.status === "success") {
+                    const newTextElement = document.createElement("p");
+                    newTextElement.id = `comment-text-${commentId}`;
+                    newTextElement.textContent = updatedText;
+
+                    inputField.replaceWith(newTextElement);
+                    saveButton.remove();
+                } else {
+                    alert("댓글 수정에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("서버 오류가 발생했습니다.");
+            });
+        });
+    }
+
+    // 삭제 이벤트
+    if (deleteLink) {
+        event.preventDefault();
+        const commentId = deleteLink.getAttribute("data-comment-id");
+
+        if (confirm("정말 삭제하시겠습니까?")) {
+            fetch("delete_comment.jsp", {
+                method: "POST",
+                headers: { "Content-Type": "application/x-www-form-urlencoded" },
+                body: `comment_id=${commentId}`
+            })
+            .then(response => response.json()) // 서버 응답 JSON 처리
+            .then(data => {
+                if (data.status === "success") {
+                    deleteLink.closest("li").remove(); // 댓글 삭제
+                } else {
+                    alert("댓글 삭제에 실패했습니다.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("서버 오류가 발생했습니다.");
+            });
+        }
     }
 });
+
 
