@@ -4,7 +4,7 @@ body {
 }
 
 .hidden {
-  display: none;
+    display: none !important;
 }
 
 header {
@@ -524,37 +524,33 @@ h2 {
 
 /* 댓글 섹션 스타일 */
 .comments-section {
-    border-top: 1px solid #ddd;
-    padding-top: 20px;
+    display: block; /* 기본 상태 */
     margin-top: 20px;
+    background-color: #f9f9f9;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .comments-section.hidden {
-    display: none;
-}
-
-.comments-section h3.comment-count {
-    margin-bottom: 10px;
-}
-
-.comments-section ul {
-    list-style-type: none;
-    padding: 0;
-}
-
-.comments-section ul li {
-    border-bottom: 1px solid #eee;
-    padding: 10px 0;
-}
-
-.comments-section ul li:last-child {
-    border-bottom: none;
+    display: none; /* hidden 클래스가 있으면 숨김 */
 }
 
 .comment-header {
-    display: flex;
-    align-items: center;
-    margin-bottom: 5px;
+    display: flex; /* 가로 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    gap: 10px; /* 요소 간격 */
+}
+
+.comment-user-id {
+    font-weight: bold; /* 사용자 ID 강조 */
+    color: #333; /* 글자 색 */
+    margin-right: 10px; /* 날짜와의 간격 */
+}
+
+.comment-date {
+    color: gray;
+    font-size: 12px; /* 날짜 글자 크기 */
 }
 
 .comment-header .profile-pic {
@@ -564,29 +560,47 @@ h2 {
     margin-right: 10px;
 }
 
-.comments-section textarea {
+.comment-count {
+    margin-bottom: 10px;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.comment-input {
     width: 100%;
-    height: 80px;
     padding: 10px;
     margin-top: 10px;
     border: 1px solid #ddd;
-    border-radius: 4px;
-    resize: vertical;
+    border-radius: 5px;
 }
 
 .add-comment-button {
     margin-top: 10px;
-    padding: 10px 20px;
+    padding: 10px;
     background-color: #007BFF;
-    color: white;
     border: none;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
 }
 
-.add-comment-button:hover {
-    background-color: #0056b3;
+#alert-list li {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
 }
+
+#alert-list li img {
+    width: 30px;
+    height: 30px;
+    margin-right: 10px;
+    border-radius: 50%;
+}
+
+#alert-list li span {
+    font-size: 14px;
+}
+
 
 /* 댓글 버튼 스타일 */
 .comment-button img {
@@ -594,4 +608,20 @@ h2 {
     height: 24px;
     cursor: pointer;
 }
+.comment-actions {
+    margin-top: 5px;
+    font-size: 12px;
+    color: gray;
+}
 
+.comment-actions a {
+    text-decoration: none; /* 밑줄 제거 */
+    color: #007BFF; /* 링크 색상 */
+    cursor: pointer; /* 마우스 포인터 변경 */
+    margin-right: 10px;
+}
+
+.comment-actions a:hover {
+    text-decoration: underline; /* 호버 시 밑줄 표시 */
+    color: #0056b3; /* 호버 색상 변경 */
+}

@@ -1,6 +1,4 @@
-@ -0,0 +1,86 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" 
-    pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*" %>
 <!DOCTYPE html>
 <html>
@@ -12,12 +10,17 @@
 </head>
 
 <body>
+    <!-- 투표 종료 알림 확인 -->
+    <%
+        // 투표 종료 알림 확인
+        request.getRequestDispatcher("check_poll_end.jsp").include(request, response);
+    %>
+
     <header>
         <a href="main.jsp"><img src="icon.png" alt="CM" id="CM" /></a>
         <div class="up">
             <img src="Bell.png" alt="알람" id="bell" onclick="toggleLayer()" />
             <div id="layer" class="hidden">
-                <!--이부분 수정해야합니다!!!!!-->
                 <img
                     src="trash.png"
                     alt="휴지통"
@@ -25,19 +28,41 @@
                     onclick="clearAlerts()"
                 />
                 <ul id="alert-list">
-                    <a href="#">
+                <% 
+                        String userId = (String) session.getAttribute("userId");
+                        if (userId != null) {
+                            try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/compare_mate?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8", "root", "0000")) {
+                                String alertQuery = "SELECT message, post_id FROM alerts WHERE user_id = ? ORDER BY created_at DESC";
+                                try (PreparedStatement alertStmt = conn.prepareStatement(alertQuery)) {
+                                    alertStmt.setString(1, userId);
+                                    try (ResultSet rs = alertStmt.executeQuery()) {
+                                        while (rs.next()) {
+                                            String message = rs.getString("message");
+                                            int postId = rs.getInt("post_id");
+                    %>
                         <li class="alert-item">
-                            <img src="circle.png" alt="프로필" />
-                            <span>투표 내용 또는 댓글 내용<br />게시글 제목</span>
+                            <a href="post_details.jsp?post_id=<%= postId %>" style="text-decoration: none;">
+                                <img src="circle.png" alt="프로필" />
+                                <span><%= message %></span>
+                            </a>
                         </li>
-                    </a>
+                        <% 
+                                        }
+                                    }
+                                }
+                            } catch (SQLException e) {
+                                e.printStackTrace();
+                            }
+                        } else {
+                            out.println("<li>알림이 없습니다.</li>");
+                        }
+                    %>
                 </ul>
             </div>
 
             <a href="main.jsp">게시판</a>
             <a href="mypage.jsp">마이페이지</a>
             <% 
-                String userId = (String) session.getAttribute("userId");
                 if (userId != null) { 
             %>
                 <a href="logout.jsp">로그아웃</a>
