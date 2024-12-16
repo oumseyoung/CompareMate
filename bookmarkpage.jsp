@@ -1,173 +1,270 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ page import="java.sql.*, java.util.*" %>
+<%@page import="java.sql.Date"%>
 <!DOCTYPE html>
 <html>
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CM Bookmark</title>
-  <link rel="stylesheet" href="mypage.css" />
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>CM Bookmark</title>
+<link rel="stylesheet" href="mypage.css" />
 </head>
-
 <body>
-  <header>
-    <a href="main.html"><img src="icon.png" alt="CM" id="CM" /></a>
+<%
+    // 로그인한 사용자의 userId를 세션에서 가져온다고 가정
+    String userId = (String)session.getAttribute("userId");
+    if (userId == null) {
+        // 로그인이 안되어있을 경우 로그인 페이지로 리다이렉트
+        response.sendRedirect("login.jsp");
+        return;
+    }
+
+    // DB 연결 정보
+    String DB_URL = "jdbc:mysql://localhost:3306/compare_mate?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
+    String DB_USERNAME = "root";
+    String DB_PASSWORD = "0000";
+
+    Connection conn = null;
+    PreparedStatement postStmt = null;
+    PreparedStatement optionStmt = null;
+    ResultSet postRs = null;
+    ResultSet optionRs = null;
+
+    try {
+        Class.forName("com.mysql.cj.jdbc.Driver");
+        conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD);
+
+        // 북마크한 게시글 조회 (bookmarks 테이블 JOIN)
+        String postQuery = "SELECT p.* FROM posts p "
+                         + "JOIN bookmarks b ON p.post_id = b.post_id "
+                         + "WHERE b.user_id = ? "
+                         + "ORDER BY p.reg_date DESC";
+        postStmt = conn.prepareStatement(postQuery);
+        postStmt.setString(1, userId);
+        postRs = postStmt.executeQuery();
+%>
+
+<header>
+    <a href="main.jsp"><img src="icon.png" alt="CM" id="CM" /></a>
     <div class="up">
-      <a href="main.html">게시판</a>
-      <a href="mypage.html">마이페이지</a>
-      <a href="first.html">로그아웃</a>
+      <a href="main.jsp">게시판</a>
+      <a href="mypage.jsp">마이페이지</a>
+      <a href="logout.jsp">로그아웃</a>
     </div>
     <hr class="custom-hr" />
-  </header>
-  <aside class="side">
+</header>
+
+<aside class="side">
     <ul>
       <li id="one"><b>카테고리</b></li>
-      <li><a href="#" data-category="all">전체 게시글</a></li>
-      <li><a href="#" data-category="electronics">전자제품</a></li>
-      <li><a href="#" data-category="fashion">패션/의류</a></li>
-      <li><a href="#" data-category="beauty">뷰티/건강</a></li>
-      <li><a href="#" data-category="food">식품/음료</a></li>
-      <li><a href="#" data-category="household">생활용품</a></li>
-      <li><a href="#" data-category="hobby">취미/여가</a></li>
-      <li><a href="#" data-category="automotive">자동차/오토바이</a></li>
-      <li><a href="#" data-category="others">기타</a></li>
+      <li><a href="#" data-category="전체 게시글">전체 게시글</a></li>
+      <li><a href="#" data-category="전자제품">전자제품</a></li>
+      <li><a href="#" data-category="패션/의류">패션/의류</a></li>
+      <li><a href="#" data-category="뷰티/건강">뷰티/건강</a></li>
+      <li><a href="#" data-category="식품/음료">식품/음료</a></li>
+      <li><a href="#" data-category="생활용품">생활용품</a></li>
+      <li><a href="#" data-category="취미/여가">취미/여가</a></li>
+      <li><a href="#" data-category="자동차/오토바이">자동차/오토바이</a></li>
+      <li><a href="#" data-category="기타">기타</a></li>
     </ul>
-  </aside>
-  <div class="content">
-    <h2>북마크</h2>
+</aside>
+
+<div class="content">
+    <h2>북마크한 게시글</h2>
     <div class="box" id="bookmark-container">
-      <!-- 게시글 1 -->
-      <div class="post" data-category="electronics" data-post-id="1">
 
-        <div class="menu-bookmark">
-          <img src="menu.png" alt="메뉴" class="menu-icon" />
-          <div class="menu-popup hidden">
-            <button class="delete-post-btn">삭제</button>
-          </div>
-          <div class="bookmark">
-            <input type="checkbox" id="bookmark-1" class="bookmark-checkbox" checked />
-            <label for="bookmark-1">
-              <img src="bookmark_filled.png" alt="북마크" class="bookmark-icon" />
-            </label>
-          </div>
-        </div>
-        <a href="post.html" class="post-link">
-          <h3 class="post-title">둘 중에 무엇을 살까요?</h3>
-          <div class="post-header">
-            <a href="profile.html">
-              <img src="circle.png" alt="프로필" class="profile-pic" />
-            </a>
-            <div>
-              <span class="username">이욱현</span>
-              <span class="date">2024년 10월 17일 17:51</span>
-            </div>
-          </div>
-          <p>개발용 노트북을 사려고 합니다.</p>
-        </a>
-        <div class="poll" data-post-id="1">
-          <div class="poll-header">
-            <img src="vote.png" alt="투표 아이콘" />
-            <span>투표</span><span id="multi-select" data-post-id="1">복수선택 가능</span>
-          </div>
-          <div id="image-popup" class="hidden">
-            <div class="popup-content">
-              <img id="popup-image" src="" alt="팝업 이미지" />
-              <button id="close-popup" type="button">닫기</button>
-            </div>
-          </div>
-          <label class="poll-option">
-            <input type="checkbox" id="option1-1" name="vote-1" value="항목 1" data-post-id="1" />
-            <span>항목 1</span>
-            <img src="image.png" alt="항목 이미지" />
-          </label>
-          <label class="poll-option">
-            <input type="checkbox" id="option2-1" name="vote-1" value="항목 2" data-post-id="1" />
-            <span>항목 2</span>
-            <img src="image.png" alt="항목 이미지" />
-          </label>
-          <label class="poll-option">
-            <input type="checkbox" id="option3-1" name="vote-1" value="항목 3" data-post-id="1" />
-            <span>항목 3</span>
-            <img src="image.png" alt="항목 이미지" />
-          </label>
-          <button class="vote-button" type="button" data-post-id="1">
-            투표하기
-          </button>
-        </div>
-        <br />
-        <a href="post.html#comment-section" class="comment-button">
-          <img src="Message square.png" alt="댓글 이미지" />
-        </a>
-      </div>
+<%
+    while (postRs.next()) {
+        int postId = postRs.getInt("post_id");
+        String userIdFromDB = postRs.getString("user_id");
+        String title = postRs.getString("title");
+        String content = postRs.getString("content");
+        String category = postRs.getString("category");
+        boolean multiSelect = postRs.getBoolean("multi_select");
+        Timestamp regDate = postRs.getTimestamp("reg_date");
+        Date endDate = postRs.getDate("end_date");
+        Time endTime = postRs.getTime("end_time");
 
-      <!-- 게시글 2 -->
-      <div class="post" data-category="electronics" data-post-id="2">
+        // 현재 서버 시간
+        Timestamp currentTime = new Timestamp(System.currentTimeMillis());
 
-        <div class="menu-bookmark">
-          <img src="menu.png" alt="메뉴" class="menu-icon" />
-          <div class="menu-popup hidden">
-            <button class="delete-post-btn">삭제</button>
-            <button class="share-post-btn">공유</button>
-          </div>
-          <div class="bookmark">
-            <input type="checkbox" id="bookmark-2" class="bookmark-checkbox" checked />
-            <label for="bookmark-2">
-              <img src="bookmark_filled.png" alt="북마크" class="bookmark-icon" />
-            </label>
-          </div>
-        </div>
-        <a href="post.html" class="post-link">
-          <h3 class="post-title">둘 중에 무엇을 살까요?</h3>
-          <div class="post-header">
-            <a href="profile.html">
-              <img src="circle.png" alt="프로필" class="profile-pic" />
-            </a>
-            <div>
-              <span class="username">이욱현</span>
-              <span class="date">2024년 10월 17일 17:51</span>
-            </div>
-          </div>
-          <p>개발용 노트북을 사려고 합니다.</p>
-        </a>
-        <div class="poll" data-post-id="2" data-multiple-choice="false">
-          <div class="poll-header">
-            <img src="vote.png" alt="투표 아이콘" />
-            <span>투표</span><span id="multi-select" data-post-id="2">복수선택 불가능</span>
-          </div>
-          <div id="image-popup" class="hidden">
-            <div class="popup-content">
-              <img id="popup-image" src="" alt="팝업 이미지" />
-              <button id="close-popup" type="button">닫기</button>
-            </div>
-          </div>
-          <label class="poll-option">
-            <input type="radio" id="option1-2" name="vote-2" value="항목 1" data-post-id="2" />
-            <span>항목 1</span>
-            <img src="image.png" alt="항목 이미지" />
-          </label>
-          <label class="poll-option">
-            <input type="radio" id="option2-2" name="vote-2" value="항목 2" data-post-id="2" />
-            <span>항목 2</span>
-            <img src="image.png" alt="항목 이미지" />
-          </label>
-          <label class="poll-option">
-            <input type="radio" id="option3-2" name="vote-2" value="항목 3" data-post-id="2" />
-            <span>항목 3</span>
-            <img src="image.png" alt="항목 이미지" />
-          </label>
-          <button class="vote-button" type="button" data-post-id="2">
-            투표하기
-          </button>
-        </div>
-        <br />
-        <a href="post.html#comment-section" class="comment-button">
-          <img src="Message square.png" alt="댓글 이미지" />
-        </a>
-      </div>
+        // 투표 종료 시간 설정
+        Timestamp votingEndTimestamp = null;
+        if (endDate != null && endTime != null) {
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(endDate);
+            cal.set(Calendar.HOUR_OF_DAY, endTime.getHours());
+            cal.set(Calendar.MINUTE, endTime.getMinutes());
+            cal.set(Calendar.SECOND, endTime.getSeconds());
+            cal.set(Calendar.MILLISECOND, 0);
+            votingEndTimestamp = new Timestamp(cal.getTimeInMillis());
+        }
+
+        boolean isVotingOpen = true;
+        if (votingEndTimestamp != null && currentTime.after(votingEndTimestamp)) {
+            isVotingOpen = false;
+        }
+
+        // 옵션 조회
+        String optionQuery = "SELECT po.option_id, po.option_text, po.image_url, COUNT(v.option_id) AS cnt "
+                           + "FROM poll_options po "
+                           + "LEFT JOIN votes v ON po.option_id = v.option_id "
+                           + "WHERE po.post_id = ? "
+                           + "GROUP BY po.option_id, po.option_text, po.image_url";
+        optionStmt = conn.prepareStatement(optionQuery);
+        optionStmt.setInt(1, postId);
+        optionRs = optionStmt.executeQuery();
+
+        List<Map<String, String>> options = new ArrayList<>();
+        while (optionRs.next()) {
+            Map<String, String> option = new HashMap<>();
+            option.put("optionId", String.valueOf(optionRs.getInt("option_id")));
+            option.put("optionText", optionRs.getString("option_text"));
+            option.put("imageUrl", optionRs.getString("image_url"));
+            option.put("voteCount", String.valueOf(optionRs.getInt("cnt")));
+            options.add(option);
+        }
+        optionRs.close();
+        optionStmt.close();
+%>
+
+<!-- 게시글 출력 (posts.jsp와 동일한 구조) -->
+<div class="post" data-category="<%= category %>" data-post-id="<%= postId %>">
+    <script>
+        var postData_<%= postId %> = {
+            postId: <%= postId %>,
+            endDate: "<%= (endDate != null) ? endDate.toString() : "" %>",
+            endTime: "<%= (endTime != null) ? endTime.toString() : "" %>",
+            multiSelect: <%= multiSelect %>,
+            isVotingOpen: <%= isVotingOpen %>
+        };
+    </script>
+    <div class="bookmark">
+        <!-- 북마크 체크박스는 기본적으로 체크되어 있고, bookmark_filled.png 아이콘 표시 -->
+        <input type="checkbox" id="bookmark-<%= postId %>" class="bookmark-checkbox" checked />
+        <label for="bookmark-<%= postId %>">
+            <img src="bookmark_filled.png" alt="북마크" class="bookmark-icon">
+        </label>
     </div>
-  </div>
-  <script src="mypage.js"></script>
-</body>
+    <a href="#" class="post-link">
+        <h3 class="post-title">
+            <%= title %>
+            <% if (!isVotingOpen) { %>
+                <span class="voting-closed-text">(종료된 투표)</span>
+            <% } %>
+        </h3>
+        <div class="post-header">
+            <a href="profilepage.jsp?user_id=<%= userIdFromDB %>">
+                <img src="circle.png" alt="프로필" class="profile-pic">
+            </a>
+            <div>
+                <span class="username"><%= userIdFromDB %></span>
+                <span class="date"><%= regDate.toString() %></span>
+            </div>
+        </div>
+        <p><%= content %></p>
+    </a>
+    <div class="poll" data-post-id="<%= postId %>" data-multiple-choice="<%= multiSelect %>">
+        <div class="poll-header">
+            <img src="vote.png" alt="투표 아이콘" />
+            <span>투표</span>
+            <span><%= multiSelect ? "복수선택 가능" : "복수선택 불가능" %></span>
+        </div>
+        <div class="image-popup hidden" id="image-popup-<%= postId %>">
+            <div class="popup-content">
+                <img class="popup-image" src="" alt="팝업 이미지" />
+                <button class="close-popup" type="button">닫기</button>
+            </div>
+        </div>
+        <%
+            for (Map<String, String> option : options) {
+                String inputType = multiSelect ? "checkbox" : "radio";
+        %>
+        <label class="poll-option <%= isVotingOpen ? "" : "disabled" %>">
+            <input
+                type="<%= inputType %>"
+                id="option<%= option.get("optionId") %>-<%= postId %>"
+                name="vote-<%= postId %>"
+                value="<%= option.get("optionId") %>"
+                data-post-id="<%= postId %>"
+                <%= isVotingOpen ? "" : "disabled" %>
+            />
+            <span><%= option.get("optionText") %></span>
+            <span class="vote-count">(<%= option.get("voteCount") %>표)</span>
+            <img src="<%= (option.get("imageUrl") != null && !option.get("imageUrl").isEmpty()) ? option.get("imageUrl") : "image.png" %>" 
+                 alt="항목 이미지" class="poll-option-image" />
+        </label>
+        <% } %>
+        <button class="vote-button" type="button" data-post-id="<%= postId %>" <%= isVotingOpen ? "" : "disabled" %>>투표하기</button>
+    </div><br>
+    <a href="#" class="comment-button" onclick="document.getElementById('comments-section-<%= postId %>').classList.toggle('hidden'); return false;">
+        <img src="Message square.png" alt="댓글 아이콘">
+    </a>
 
+    <hr class="comment-hr">
+
+    <!-- 댓글 섹션 -->
+    <div class="comments-section hidden" id="comments-section-<%= postId %>">
+        <h3 class="comment-count">댓글</h3>
+        <ul id="comment-list-<%= postId %>">
+            <%
+            String commentQuery = "SELECT * FROM comments WHERE post_id = ? ORDER BY comment_date ASC";
+            try (PreparedStatement commentStmt = conn.prepareStatement(commentQuery)) {
+                commentStmt.setInt(1, postId);
+                try (ResultSet commentRs = commentStmt.executeQuery()) {
+                    while (commentRs.next()) {
+                        String commentUserId = commentRs.getString("user_id");
+                        String commentText = commentRs.getString("comment_text");
+                        Timestamp commentDate = commentRs.getTimestamp("comment_date");
+                        int commentId = commentRs.getInt("comment_id");
+            %>
+            <li>
+                <div class="comment-header">
+                    <img src="circle.png" alt="프로필" class="profile-pic">
+                    <span class="comment-user-id"><%= commentUserId %></span>
+                    <span class="comment-date"><%= commentDate %></span>
+                </div>
+                <p id="comment-text-<%= commentId %>"><%= commentText %></p>
+                <% if (commentUserId.equals(session.getAttribute("userId"))) { %>
+                <div class="comment-actions">
+                    <a href="#" class="edit-comment" data-comment-id="<%= commentId %>">수정</a> |
+                    <a href="#" class="delete-comment" data-comment-id="<%= commentId %>">삭제</a>
+                </div>
+                <% } %>
+            </li>
+            <%
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            %>
+        </ul>
+        <form>
+            <textarea id="comment-input-<%= postId %>" placeholder="댓글을 입력하세요"></textarea>
+            <button type="button" class="add-comment-button" data-post-id="<%= postId %>">댓글 추가</button>
+        </form>
+    </div>
+</div>
+<%
+    } // while문 끝
+
+    postRs.close();
+    postStmt.close();
+    conn.close();
+} catch (Exception e) {
+    e.printStackTrace();
+} finally {
+    if (optionRs != null) try { optionRs.close(); } catch (SQLException ignore) {}
+    if (optionStmt != null) try { optionStmt.close(); } catch (SQLException ignore) {}
+    if (postRs != null) try { postRs.close(); } catch (SQLException ignore) {}
+    if (postStmt != null) try { postStmt.close(); } catch (SQLException ignore) {}
+    if (conn != null) try { conn.close(); } catch (SQLException ignore) {}
+}
+%>
+    </div>
+</div>
+<script src="main.js"></script>
+</body>
 </html>

@@ -14,12 +14,11 @@
 
     if (userId != null) {
         try (Connection conn = DriverManager.getConnection(DB_URL, DB_USERNAME, DB_PASSWORD)) {
-            // is_deleted를 TRUE로 설정
-            String deleteQuery = "UPDATE alerts SET is_deleted = TRUE WHERE user_id = ?";
+            String deleteQuery = "DELETE FROM alerts WHERE user_id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(deleteQuery)) {
                 stmt.setString(1, userId);
-                int rowsUpdated = stmt.executeUpdate();
-                if (rowsUpdated > 0) {
+                int rowsDeleted = stmt.executeUpdate();
+                if (rowsDeleted > 0) {
                     success = true;
                     message = "알림이 성공적으로 삭제되었습니다.";
                 } else {

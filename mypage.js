@@ -23,10 +23,10 @@ function addAlert(message, imageUrl) {
   // 알람을 목록의 맨 위에 추가
   alertList.insertBefore(newAlert, alertList.firstChild);
 }
+
 function clearAlerts() {
   const alertList = document.getElementById("alert-list");
   alertList.innerHTML = ""; // 알람 목록을 비움
-  alertCounter = 0; // 알람 카운터 초기화
 }
 
 // 5초마다 무작위로 메시지를 추가
@@ -47,14 +47,12 @@ document.querySelectorAll('.side ul li a').forEach(link => {
   link.addEventListener('click', (event) => {
       event.preventDefault(); // 기본 링크 동작 방지
       const category = link.getAttribute('data-category');
-      // main.html로 이동하면서 카테고리를 URL에 포함
-      window.location.href = `main.html?category=${category}`;
+      // main.jsp로 이동하면서 카테고리를 URL에 포함 (필요시 수정)
+      window.location.href = `main.jsp?category=${category}`;
   });
 });
 
-/* -----------------------------------------
- * 프로필 수정 기능
- * ----------------------------------------- */
+// 페이지 로드 시 초기화
 document.addEventListener("DOMContentLoaded", () => {
   const editProfileBtn = document.getElementById("edit-profile");
   const nicknameElement = document.getElementById("nickname");
@@ -73,6 +71,15 @@ document.addEventListener("DOMContentLoaded", () => {
     nicknameInput.classList.remove("hidden");
     cameraDiv.classList.remove("hidden");
     interestEditSection.classList.remove("hidden");
+
+    // 기존 관심분야를 체크박스에 반영
+    const originalInterests = interestList.textContent.trim();
+    originalInterests.split(",").map(i => i.trim()).forEach(i => {
+      const checkbox = document.querySelector(`#interest-form input[value="${i}"]`);
+      if (checkbox) {
+        checkbox.checked = true;
+      }
+    });
   });
 
   // 카메라 이미지를 클릭해서 파일 첨부 열기
@@ -92,24 +99,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 확인 버튼 클릭 이벤트
+  // 확인 버튼 클릭 이벤트 (AJAX로 update_user_info.jsp 호출)
   saveProfileBtn.addEventListener("click", () => {
     const newNickname = nicknameInput.value.trim();
-    if (newNickname) {
-      nicknameElement.textContent = newNickname;
-    }
-
-    // 관심분야 저장
     const selectedInterests = Array.from(
       document.querySelectorAll("#interest-form input:checked")
     ).map((checkbox) => checkbox.value);
-    interestList.textContent = selectedInterests.join(", ");
+    const newInterests = selectedInterests.join(", ");
 
-    // 수정 UI 숨기기
-    nicknameInput.classList.add("hidden");
-    nicknameElement.classList.remove("hidden");
-    cameraDiv.classList.add("hidden");
-    interestEditSection.classList.add("hidden");
+    fetch('update_user_info.jsp', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `nickname=${encodeURIComponent(newNickname)}&interests=${encodeURIComponent(newInterests)}`
+    })
+    .then(response => response.json())
+    .then(data => {
+      if (data.status === 'success') {
+        nicknameElement.textContent = newNickname;
+        interestList.textContent = newInterests;
+        nicknameInput.classList.add("hidden");
+        nicknameElement.classList.remove("hidden");
+        cameraDiv.classList.add("hidden");
+        interestEditSection.classList.add("hidden");
+        alert("정보가 업데이트되었습니다.");
+      } else {
+        alert("업데이트 실패: " + data.message);
+      }
+    })
+    .catch(error => {
+      console.error(error);
+      alert("서버 오류 발생");
+    });
   });
 
   /* -----------------------------------------
@@ -145,45 +167,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
 // 팝업 관련 요소 가져오기
 const popup = document.getElementById("image-popup");
-const popupImage = document.getElementById("popup-image");
-const closePopupButton = document.getElementById("close-popup");
-const clickableImages = document.querySelectorAll('.poll-option img');
+if (popup) {
+  const popupImage = document.getElementById("popup-image");
+  const closePopupButton = document.getElementById("close-popup");
+  const clickableImages = document.querySelectorAll('.poll-option img');
 
-// 이미지 클릭 시 팝업 표시
-clickableImages.forEach((image) => {
-  image.addEventListener("click", (event) => {
-    popupImage.src = image.src; // 클릭한 이미지의 src를 팝업에 설정
-    popup.classList.remove("hidden"); // hidden 클래스 제거
-    popup.style.display = "flex"; // 팝업 표시
+  // 이미지 클릭 시 팝업 표시
+  clickableImages.forEach((image) => {
+    image.addEventListener("click", (event) => {
+      popupImage.src = image.src; // 클릭한 이미지의 src를 팝업에 설정
+      popup.classList.remove("hidden"); // hidden 클래스 제거
+      popup.style.display = "flex"; // 팝업 표시
+    });
   });
-});
 
-// 닫기 버튼 클릭 시 팝업 숨기기
-closePopupButton.addEventListener("click", () => {
-  closePopup(); // 팝업 닫기 함수 호출
-});
-
-// 팝업 외부 클릭 시 팝업 숨기기
-popup.addEventListener("click", (event) => {
-  if (event.target === popup) {
+  // 닫기 버튼 클릭 시 팝업 숨기기
+  closePopupButton.addEventListener("click", () => {
     closePopup(); // 팝업 닫기 함수 호출
-  }
-});
+  });
 
-// 팝업 닫기 함수
-function closePopup() {
-  popup.classList.add("hidden"); // hidden 클래스 추가
-  popup.style.display = "none"; // 팝업 숨기기
-  popupImage.src = ""; // 팝업 이미지 초기화
+  // 팝업 외부 클릭 시 팝업 숨기기
+  popup.addEventListener("click", (event) => {
+    if (event.target === popup) {
+      closePopup(); // 팝업 닫기 함수 호출
+    }
+  });
+
+  // 팝업 닫기 함수
+  function closePopup() {
+    popup.classList.add("hidden"); // hidden 클래스 추가
+    popup.style.display = "none"; // 팝업 숨기기
+    popupImage.src = ""; // 팝업 이미지 초기화
+  }
+
+  // 페이지 로드 시 팝업 숨기기
+  window.addEventListener("load", () => {
+    if (!popup.classList.contains("hidden")) {
+      popup.classList.add("hidden");
+      popup.style.display = "none";
+    }
+  });
 }
-
-// 페이지 로드 시 팝업 숨기기
-window.addEventListener("load", () => {
-  if (!popup.classList.contains("hidden")) {
-    popup.classList.add("hidden");
-    popup.style.display = "none";
-  }
-});
 
 // 북마크 체크박스와 아이콘을 동기화 및 상태 저장/불러오기
 const bookmarkCheckboxes = document.querySelectorAll('.bookmark-checkbox');
@@ -217,7 +241,7 @@ const pollOptions = document.querySelectorAll('.poll-option');
 pollOptions.forEach(option => {
   const input = option.querySelector('input[type="checkbox"], input[type="radio"]');
   input.addEventListener('change', () => {
-    const isRadio = input.type === 'radio'; // 여기서 isRadio 변수 정의
+    const isRadio = input.type === 'radio';
     if (input.checked) {
       option.classList.add('checked');
       if (isRadio) {
@@ -238,16 +262,15 @@ pollOptions.forEach(option => {
   });
 });
 
-// 투표 버튼에 이벤트 리스너 추가
+// 투표 버튼에 이벤트 리스너 추가 (로컬 스토리지 저장)
 document.querySelectorAll('button.vote-button').forEach(voteButton => {
   voteButton.addEventListener('click', () => {
     const postId = voteButton.getAttribute('data-post-id');
     const poll = voteButton.closest('.poll');
-    const pollOptions = poll.querySelectorAll('input[type="checkbox"], input[type="radio"]');
-    const isMultipleChoice = poll.getAttribute('data-multiple-choice') === 'true';
+    const pollInputs = poll.querySelectorAll('input[type="checkbox"], input[type="radio"]');
 
     // 체크된 항목이 있는지 확인
-    const selectedOptions = Array.from(pollOptions)
+    const selectedOptions = Array.from(pollInputs)
       .filter(input => input.checked)
       .map(input => input.value);
 
@@ -273,7 +296,7 @@ document.querySelectorAll('button.vote-button').forEach(voteButton => {
   });
 });
 
-// 투표 결과 로드 및 UI 업데이트 함수 수정
+// 투표 결과 로드 및 UI 업데이트 함수
 function loadVotes() {
   document.querySelectorAll('.poll').forEach(poll => {
     const postId = poll.getAttribute('data-post-id');
@@ -286,7 +309,6 @@ function loadVotes() {
       voteButton.disabled = true;
       voteButton.textContent = '이미 투표한 게시글입니다';
 
-      // poll-option 업데이트
       pollOptions.forEach(option => {
         const input = option.querySelector('input[type="checkbox"], input[type="radio"]');
         input.disabled = true;
@@ -295,7 +317,6 @@ function loadVotes() {
         const optionValue = input.value;
         const voteCount = voteData[optionValue] || 0;
 
-        // 투표 수를 표시할 span 추가
         let voteCountSpan = option.querySelector('.vote-count');
         if (!voteCountSpan) {
           voteCountSpan = document.createElement('span');
@@ -303,9 +324,7 @@ function loadVotes() {
           voteCountSpan.style.marginRight = '10px';
           voteCountSpan.style.fontSize = '14px';
           voteCountSpan.style.color = '#555';
-          // 이미지 요소를 선택
           const imageElement = option.querySelector('img');
-          // 투표 수를 이미지 왼쪽에 삽입
           option.insertBefore(voteCountSpan, imageElement);
         }
         voteCountSpan.textContent = `(${voteCount}표)`;
@@ -333,7 +352,6 @@ function updateVoteUI(postId) {
       const optionValue = input.value;
       const voteCount = voteData[optionValue] || 0;
 
-      // 투표 수를 표시할 span 추가
       let voteCountSpan = option.querySelector('.vote-count');
       if (!voteCountSpan) {
         voteCountSpan = document.createElement('span');
@@ -341,9 +359,7 @@ function updateVoteUI(postId) {
         voteCountSpan.style.marginRight = '10px';
         voteCountSpan.style.fontSize = '14px';
         voteCountSpan.style.color = '#555';
-        // 이미지 요소를 선택
         const imageElement = option.querySelector('img');
-        // 투표 수를 이미지 왼쪽에 삽입
         option.insertBefore(voteCountSpan, imageElement);
       }
       voteCountSpan.textContent = `(${voteCount}표)`;
