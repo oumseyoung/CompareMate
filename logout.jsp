@@ -3,6 +3,17 @@
 <%
     // 세션 무효화
     session.invalidate();
-    // 로그인 페이지로 리디렉션
-    response.sendRedirect("login.jsp");
 %>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>로그아웃</title>
+</head>
+<body>
+    <script>
+        // 메인 페이지로 리다이렉트
+        window.location.href = 'main.jsp';
+    </script>
+</body>
+</html>
