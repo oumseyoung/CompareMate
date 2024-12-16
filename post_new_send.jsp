@@ -61,15 +61,12 @@
 
         // `posts` 테이블에 데이터 삽입 (user_id 포함)
         String insertPostQuery = "INSERT INTO posts (user_id, category, title, content, multi_select, end_date, end_time, notify) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
-		postStmt = conn.prepareStatement(insertPostQuery, Statement.RETURN_GENERATED_KEYS);
+        postStmt = conn.prepareStatement(insertPostQuery, Statement.RETURN_GENERATED_KEYS);
         postStmt.setString(1, userId); // user_id 설정
         postStmt.setString(2, category);
         postStmt.setString(3, title);
         postStmt.setString(4, content);
         postStmt.setBoolean(5, multiSelect);
-        postStmt.setDate(6, sqlEndDate != null ? sqlEndDate : null);
-        postStmt.setTime(7, sqlEndTime != null ? sqlEndTime : null);
-        postStmt.setBoolean(8, notify);
 
         if (sqlEndDate != null) {
             postStmt.setDate(6, sqlEndDate);

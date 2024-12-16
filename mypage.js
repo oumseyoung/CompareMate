@@ -1,55 +1,46 @@
-// 알람 레이어의 표시/숨김
+// 알람 레이어의 표시/숨김을 토글하는 함수
 function toggleLayer() {
-    const layer = document.getElementById("layer");
-    layer.classList.toggle("hidden");
+  const layer = document.getElementById("layer");
+  layer.classList.toggle("hidden"); // 'hidden' 클래스를 추가하거나 제거하여 표시/숨김 토글
 }
 
-// 알람 목록 로드 함수
-function loadAlerts() {
-    fetch("alerts.jsp", { method: "GET" })
-        .then(response => response.json())
-        .then(data => {
-            const alertList = document.getElementById("alert-list");
-            alertList.innerHTML = ""; // 기존 알림 제거
+// 알람 추가 함수
+function addAlert(message, imageUrl) {
+  const alertList = document.getElementById("alert-list");
 
-            if (data.length > 0) {
-                data.forEach(alert => {
-                    const newAlert = document.createElement("li");
-                    newAlert.classList.add("alert-item");
-                    newAlert.innerHTML = `
-                        <a href="post_details.jsp?post_id=${alert.postId}" style="display: flex; align-items: center; text-decoration: none; padding: 10px;">
-                            <img src="circle.png" alt="프로필" style="width: 30px; height: 30px; border-radius: 50%; margin-left: 5px;" />
-                            <div style="margin-left: 10px;">
-                                <span style="font-size: 15px; font-weight: bold; display: block;">${alert.message}</span>
-                                <span style="color: gray; font-size: 12px;">${new Date(alert.createdAt).toLocaleString()}</span>
-                            </div>
-                        </a>
-                    `;
-                    alertList.appendChild(newAlert);
-                });
-            } else {
-                const noAlert = document.createElement("li");
-                noAlert.textContent = "알림이 없습니다.";
-                alertList.appendChild(noAlert);
-            }
-        })
-        .catch(error => console.error("알림 로드 중 오류:", error));
+  // 새로운 알람 항목 생성
+  const newAlert = document.createElement("li");
+  newAlert.innerHTML = `
+  <a href="#" style="display: flex; align-items: center; text-decoration: none; padding: 10px;">
+    <img src="${imageUrl}" alt="프로필" style="width: 30px; height: 30px; border-radius: 50%; margin-left: 5px;" />
+    <div style="margin-left: 10px;">
+      <span style="font-size: 15px; font-weight: bold; display: block;">${message}</span>
+      <span style="color: gray; font-size: 12px;">게시글 제목</span>
+    </div>
+  </a>
+`;
+
+  // 알람을 목록의 맨 위에 추가
+  alertList.insertBefore(newAlert, alertList.firstChild);
 }
-
-// 알람 비우기
 function clearAlerts() {
-    fetch("clear_alerts.jsp", { method: "POST" })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === "success") {
-                loadAlerts(); // 알림 목록 재로드
-                console.log(data.message);
-            } else {
-                console.error(data.message);
-            }
-        })
-        .catch(error => console.error("알림 삭제 중 오류:", error));
+  const alertList = document.getElementById("alert-list");
+  alertList.innerHTML = ""; // 알람 목록을 비움
+  alertCounter = 0; // 알람 카운터 초기화
 }
+
+// 5초마다 무작위로 메시지를 추가
+setInterval(() => {
+  const messages = [
+    { text: "게시물에 댓글이 달렸습니다.", image: "circle.png" },
+    { text: "투표가 종료되었습니다.", image: "circle.png" },
+  ];
+
+  // 메시지 중 하나를 무작위로 선택
+  const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+  addAlert(randomMessage.text, randomMessage.image);
+}, 5000); // 5초마다 알람 추가
 
 // 사이드바 카테고리 클릭 이벤트
 document.querySelectorAll('.side ul li a').forEach(link => {
