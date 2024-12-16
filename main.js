@@ -1,7 +1,7 @@
 // 알람 레이어의 표시/숨김
 function toggleLayer() {
     const layer = document.getElementById("layer");
-    layer.classList.toggle("hidden"); // 'hidden' 클래스를 추가하거나 제거하여 표시/숨김 토글
+    layer.classList.toggle("hidden");
 }
 
 // 알람 추가 함수
@@ -14,7 +14,7 @@ function addAlert(message, imageUrl) {
             <img src="${imageUrl}" alt="프로필" style="width: 30px; height: 30px; border-radius: 50%; margin-left: 5px;" />
             <div style="margin-left: 10px;">
                 <span style="font-size: 15px; font-weight: bold; display: block;">${message}</span>
-                <span style="color: gray; font-size: 12px;">게시글 제목</span>
+                <span style="color: gray; font-size: 12px;">투표 종료 알림</span>
             </div>
         </a>
     `;
@@ -25,19 +25,24 @@ function addAlert(message, imageUrl) {
 // 알람 비우기
 function clearAlerts() {
     const alertList = document.getElementById("alert-list");
-    alertList.innerHTML = ""; // 알람 목록을 비움
+
+    // 서버에 알림 삭제 요청
+    fetch("clear_alerts.jsp", {
+        method: "POST",
+    })
+        .then((response) => response.json())
+        .then((data) => {
+            if (data.status === "success") {
+                alertList.innerHTML = ""; // 클라이언트에서 알림 목록 비우기
+                console.log(data.message);
+            } else {
+                console.error(data.message);
+            }
+        })
+        .catch((error) => {
+            console.error("알림 삭제 중 오류 발생:", error);
+        });
 }
-
-// 5초마다 무작위 알람 추가
-setInterval(() => {
-    const messages = [
-        { text: "게시물에 댓글이 달렸습니다.", image: "circle.png" },
-        { text: "투표가 종료되었습니다.", image: "circle.png" },
-    ];
-
-    const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-    addAlert(randomMessage.text, randomMessage.image);
-}, 5000);
 
 // 카테고리 필터링
 const categoryLinks = document.querySelectorAll('.side ul li a');
