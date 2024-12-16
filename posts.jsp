@@ -1,19 +1,21 @@
-<%@page import="java.sql.Date"%>
+<%@ page import="java.sql.Date"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
 <%@ page import="java.sql.*, java.util.*" %>
 
 <%
     // 데이터베이스 연결 정보
-    String DB_URL = "jdbc:mysql://localhost:3306/compare_mate?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
+    String DB_URL = "jdbc:mysql://localhost:3306/compare_mate?useSSL=false&serverTimezone=Asia/Seoul";
     String DB_USERNAME = "root";
     String DB_PASSWORD = "0000";
 
     Connection conn = null;
     PreparedStatement postStmt = null;
     PreparedStatement optionStmt = null;
+    PreparedStatement commentStmt = null; // 댓글 쿼리
     ResultSet postRs = null;
     ResultSet optionRs = null;
+    ResultSet commentRs = null; // 댓글 결과
 
     try {
         Class.forName("com.mysql.cj.jdbc.Driver");
@@ -27,12 +29,11 @@
         while (postRs.next()) {
             int postId = postRs.getInt("post_id");
             String userIdFromDB = postRs.getString("user_id");
-            String title = postRs.getString("title") != null ? postRs.getString("title") : "";
-            String content = postRs.getString("content") != null ? postRs.getString("content") : "";
-            String category = postRs.getString("category") != null ? postRs.getString("category") : "";
+            String title = postRs.getString("title");
+            String content = postRs.getString("content");
+            String category = postRs.getString("category");
             boolean multiSelect = postRs.getBoolean("multi_select");
             Timestamp regDate = postRs.getTimestamp("reg_date");
-            boolean notify = postRs.getBoolean("notify");
             Date endDate = postRs.getDate("end_date");
             Time endTime = postRs.getTime("end_time");
 
@@ -80,69 +81,48 @@
             }
             optionRs.close();
             optionStmt.close();
+
+            // 댓글 데이터를 가져오는 쿼리
+            String commentQuery = "SELECT c.comment_id, c.user_id, c.comment_text, c.comment_date, u.nickname " +
+                                  "FROM comments c " +
+                                  "JOIN users u ON c.user_id = u.id " +
+                                  "WHERE c.post_id = ? " +
+                                  "ORDER BY c.comment_date ASC";
+            commentStmt = conn.prepareStatement(commentQuery);
+            commentStmt.setInt(1, postId);
+            commentRs = commentStmt.executeQuery();
+
+            // 댓글 리스트 생성
+            List<Map<String, String>> comments = new ArrayList<>();
+            while (commentRs.next()) {
+                Map<String, String> comment = new HashMap<>();
+                comment.put("commentId", String.valueOf(commentRs.getInt("comment_id")));
+                comment.put("userId", commentRs.getString("user_id"));
+                comment.put("nickname", commentRs.getString("nickname"));
+                comment.put("commentText", commentRs.getString("comment_text"));
+                comment.put("commentDate", commentRs.getString("comment_date"));
+                comments.add(comment);
+            }
+            commentRs.close();
+            commentStmt.close();
 %>
 
 <!-- 게시글 -->
 <div class="post" data-category="<%= category %>" data-post-id="<%= postId %>">
-<script>
-    // 투표 종료 알림
-    if (postData_<%= postId %>.notify === "true" && postData_<%= postId %>.endDate && postData_<%= postId %>.endTime) {
-        const endDateTime = new Date(postData_<%= postId %>.endDate + 'T' + postData_<%= postId %>.endTime);
-        const currentTime = new Date();
-
-        if (endDateTime > currentTime) {
-            const timeDifference = endDateTime - currentTime;
-
-            setTimeout(() => {
-                addAlert("투표가 종료되었습니다!", "circle.png");
-            }, timeDifference);
-        }
-    }
-
-    // 댓글 추가 시 알림
-    document.addEventListener("DOMContentLoaded", function() {
-    const commentButton = document.querySelector(".add-comment-button[data-post-id='<%= postId %>']");
-
-    if (commentButton) {
-        commentButton.addEventListener("click", function() {
-            const commentInput = document.getElementById("comment-input-<%= postId %>");
-            const commentText = commentInput.value.trim();
-
-            if (commentText) {
-                // 서버에 댓글 추가 요청 (AJAX 요청으로 구현)
-                const formData = new FormData();
-                formData.append("postId", <%= postId %>);
-                formData.append("comment", commentText);
-
-                fetch("add_comment.jsp", {
-                    method: "POST",
-                    body: formData
-                })
-                .then(response => response.json())
-                .then(result => {
-                    if (result.status === "success") {
-                        alert("댓글이 추가되었습니다.");
-                        location.reload(); // 알림 및 댓글 새로고침
-                    } else {
-                        alert("댓글 추가에 실패했습니다.");
-                    }
-                });
-            } else {
-                alert("댓글을 입력하세요.");
-            }
-        });
-    }
-});
-
-</script>
-
-
-
-    <a href="#" class="post-link">
+    <script>
+        var postData_<%=postId%> = {
+            postId: <%= postId %>,
+            endDate: "<%= (endDate != null) ? endDate.toString() : "" %>",
+            endTime: "<%= (endTime != null) ? endTime.toString() : "" %>",
+            multiSelect: <%= multiSelect %>,
+            isVotingOpen: <%= isVotingOpen %>
+        };
+    </script>
+    <a href="post.jsp?post_id=<%= postId %>" class="post-link">
         <div class="bookmark">
             <input type="checkbox" id="bookmark-<%= postId %>" class="bookmark-checkbox" />
             <label for="bookmark-<%= postId %>">
-                <img src="bookmark.png" alt="북마크" class="bookmark-icon">
+                <img src="bookmark.png" alt="북마크" class="bookmark-icon" />
             </label>
         </div>
         <h3 class="post-title">
@@ -152,12 +132,13 @@
             <% } %>
         </h3>
         <div class="post-header">
-            <a href="profilepage.jsp?user_id=<%= userIdFromDB %>">
-                <img src="circle.png" alt="프로필" class="profile-pic">
+            <a href="profile.jsp?user_id=<%= userIdFromDB %>">
+                <img src="circle.png" alt="프로필" class="profile-pic" />
             </a>
             <div>
                 <span class="username"><%= userIdFromDB %></span>
-                <span class="date"><%= (regDate != null) ? regDate.toString() : "" %></span>
+                <!-- reg_date 출력 -->
+                <span class="date"><%= regDate.toString() %></span>
             </div>
         </div>
         <p><%= content %></p>
@@ -167,6 +148,7 @@
             <img src="vote.png" alt="투표 아이콘" />
             <span>투표</span>
             <span><%= multiSelect ? "복수선택 가능" : "복수선택 불가능" %></span>
+            <span>투표 취소/변경 가능</span>
         </div>
         <div class="image-popup hidden" id="image-popup-<%= postId %>">
             <div class="popup-content">
@@ -194,64 +176,39 @@
         </label>
         <% } %>
         <button class="vote-button" type="button" data-post-id="<%= postId %>" <%= isVotingOpen ? "" : "disabled" %>>투표하기</button>
-    </div><br>
-<a href="#" class="comment-button" onclick="document.getElementById('comments-section-<%= postId %>').classList.toggle('hidden'); return false;">
-    <img src="Message square.png" alt="댓글 아이콘">
-</a>
-
-    <hr class="comment-hr">
-
-<!-- 댓글 섹션 -->
-<!-- 댓글 섹션 -->
-<div class="comments-section hidden" id="comments-section-<%= postId %>">
-    <h3 class="comment-count">댓글</h3>
-    <ul id="comment-list-<%= postId %>">
-        <%
-        // 댓글 조회 쿼리 실행
-        String commentQuery = "SELECT * FROM comments WHERE post_id = ? ORDER BY comment_date ASC";
-        try (PreparedStatement commentStmt = conn.prepareStatement(commentQuery)) {
-            commentStmt.setInt(1, postId);
-            try (ResultSet commentRs = commentStmt.executeQuery()) {
-                while (commentRs.next()) {
-                    String commentUserId = commentRs.getString("user_id");
-                    String commentText = commentRs.getString("comment_text");
-                    Timestamp commentDate = commentRs.getTimestamp("comment_date");
-                    int commentId = commentRs.getInt("comment_id");
-    %>
-        <li>
-    <div class="comment-header">
-        <img src="circle.png" alt="프로필" class="profile-pic">
-        <span class="comment-user-id"><%= commentUserId %></span>
-        <span class="comment-date"><%= commentDate %></span>
     </div>
-    <p id="comment-text-<%= commentRs.getInt("comment_id") %>"><%= commentText %></p>
-
-    <!-- 수정/삭제 링크: 본인 아이디만 보이게 설정 -->
-<%
-    String sessionUserId = (String) session.getAttribute("userId");
-    if (sessionUserId != null && commentUserId.equals(sessionUserId)) { 
-%>
-        <div class="comment-actions">
-            <a href="#" class="edit-comment" data-comment-id="<%= commentRs.getInt("comment_id") %>">수정</a> |
-            <a href="#" class="delete-comment" data-comment-id="<%= commentRs.getInt("comment_id") %>">삭제</a>
-        </div>
-    <% } %>
-</li>
-
-        <%
-                    }
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        %>
-    </ul>
-    <form>
-    <textarea id="comment-input-<%= postId %>" placeholder="댓글을 입력하세요"></textarea>
-    <button type="button" class="add-comment-button" data-post-id="<%= postId %>">댓글 추가</button>
-</form>
-
-</div>
+    <br />
+    <!-- 댓글 버튼을 이미지로 변경 -->
+    <img 
+        src="Message square.png" 
+        alt="댓글 이미지" 
+        class="comment-button" 
+        data-post-id="<%= postId %>" 
+        style="cursor: pointer; width: 24px; height: 24px;" 
+    />
+    <!-- 또는 적절한 크기로 조정하세요 -->
+    
+    <!-- 댓글 섹션 -->
+    <div class="comments-section hidden" id="comments-<%= postId %>">
+        <h3 class="comment-count">댓글 <span id="comment-count-<%= postId %>"><%= comments.size() %></span></h3>
+        <ul class="comment-list" id="comment-list-<%= postId %>">
+            <% for (Map<String, String> comment : comments) { %>
+                <li>
+                    <div class="comment-header">
+                        <img src="circle.png" alt="프로필" class="profile-pic">
+                        <span class="nickname"><%= comment.get("nickname") %></span>
+                    </div>
+                    <p><%= comment.get("commentText") %></p>
+                </li>
+            <% } %>
+        </ul>
+        <% if (session.getAttribute("userId") != null) { %>
+            <textarea class="comment-input" id="comment-input-<%= postId %>" placeholder="댓글을 입력하세요"></textarea>
+            <button class="add-comment-button" data-post-id="<%= postId %>">댓글 추가</button>
+        <% } else { %>
+            <p>댓글을 작성하려면 <a href="login.jsp">로그인</a>하세요.</p>
+        <% } %>
+    </div>
 </div>
 <%
         } // 게시글 반복 끝
@@ -260,8 +217,9 @@
         conn.close();
     } catch (Exception e) {
         e.printStackTrace();
-        out.println("데이터베이스 오류 발생: " + e.getMessage());
     } finally {
+        if (commentRs != null) try { commentRs.close(); } catch (SQLException ignore) {}
+        if (commentStmt != null) try { commentStmt.close(); } catch (SQLException ignore) {}
         if (optionRs != null) try { optionRs.close(); } catch (SQLException ignore) {}
         if (optionStmt != null) try { optionStmt.close(); } catch (SQLException ignore) {}
         if (postRs != null) try { postRs.close(); } catch (SQLException ignore) {}
