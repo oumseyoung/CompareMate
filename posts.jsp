@@ -5,7 +5,7 @@
 
 <%
     // 데이터베이스 연결 정보
-    String DB_URL = "jdbc:mysql://localhost:3306/compare_mate?useSSL=false&serverTimezone=Asia/Seoul";
+    String DB_URL = "jdbc:mysql://localhost:3306/compare_mate?useSSL=false&serverTimezone=Asia/Seoul&characterEncoding=UTF-8";
     String DB_USERNAME = "root";
     String DB_PASSWORD = "0000";
 
@@ -149,20 +149,60 @@
         <% } %>
         <button class="vote-button" type="button" data-post-id="<%= postId %>" <%= isVotingOpen ? "" : "disabled" %>>투표하기</button>
     </div><br>
-    <a href="#" class="comment-button" data-post-id="<%= postId %>">
-        <img src="Message square.png" alt="댓글 이미지" />
-    </a>
+<a href="#" class="comment-button" onclick="document.getElementById('comments-section-<%= postId %>').classList.toggle('hidden'); return false;">
+    <img src="Message square.png" alt="댓글 아이콘">
+</a>
+
     <hr class="comment-hr">
 
-    <!-- Comments Section (Initially Hidden) -->
-    <div class="comments-section hidden" id="comments-section-<%= postId %>">
-        <h3 class="comment-count">댓글 0</h3>
-        <ul id="comment-list-<%= postId %>">
-            <!-- Existing comments will be loaded here dynamically -->
-        </ul>
-        <textarea id="comment-input-<%= postId %>" placeholder="댓글을 입력하세요"></textarea>
-        <button class="add-comment-button" data-post-id="<%= postId %>">댓글 추가</button>
+<!-- 댓글 섹션 -->
+<!-- 댓글 섹션 -->
+<div class="comments-section hidden" id="comments-section-<%= postId %>">
+    <h3 class="comment-count">댓글</h3>
+    <ul id="comment-list-<%= postId %>">
+        <%
+        // 댓글 조회 쿼리 실행
+        String commentQuery = "SELECT * FROM comments WHERE post_id = ? ORDER BY comment_date ASC";
+        try (PreparedStatement commentStmt = conn.prepareStatement(commentQuery)) {
+            commentStmt.setInt(1, postId);
+            try (ResultSet commentRs = commentStmt.executeQuery()) {
+                while (commentRs.next()) {
+                    String commentUserId = commentRs.getString("user_id");
+                    String commentText = commentRs.getString("comment_text");
+                    Timestamp commentDate = commentRs.getTimestamp("comment_date");
+                    int commentId = commentRs.getInt("comment_id");
+    %>
+        <li>
+    <div class="comment-header">
+        <img src="circle.png" alt="프로필" class="profile-pic">
+        <span class="comment-user-id"><%= commentUserId %></span>
+        <span class="comment-date"><%= commentDate %></span>
     </div>
+    <p id="comment-text-<%= commentRs.getInt("comment_id") %>"><%= commentText %></p>
+
+    <!-- 수정/삭제 링크: 본인 아이디만 보이게 설정 -->
+    <% if (commentUserId.equals(session.getAttribute("userId"))) { %>
+        <div class="comment-actions">
+            <a href="#" class="edit-comment" data-comment-id="<%= commentRs.getInt("comment_id") %>">수정</a> |
+            <a href="#" class="delete-comment" data-comment-id="<%= commentRs.getInt("comment_id") %>">삭제</a>
+        </div>
+    <% } %>
+</li>
+
+        <%
+                    }
+                }
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        %>
+    </ul>
+    <form>
+    <textarea id="comment-input-<%= postId %>" placeholder="댓글을 입력하세요"></textarea>
+    <button type="button" class="add-comment-button" data-post-id="<%= postId %>">댓글 추가</button>
+</form>
+
+</div>
 </div>
 <%
         } // 게시글 반복 끝

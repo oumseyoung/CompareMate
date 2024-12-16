@@ -1,7 +1,7 @@
 // 알람 레이어의 표시/숨김
 function toggleLayer() {
     const layer = document.getElementById("layer");
-    layer.classList.toggle("hidden"); // 'hidden' 클래스를 추가하거나 제거하여 표시/숨김 토글
+    layer.classList.toggle("hidden");
 }
 
 // 알람 추가 함수
@@ -308,152 +308,87 @@ function updateVoteUI(postId, results) {
     });
 }
 
-// 기존 함수들...
 
-// 댓글 섹션 토글 함수
-function toggleComments(postId) {
-    const commentsSection = document.getElementById(`comments-section-${postId}`);
-    if (commentsSection.classList.contains('hidden')) {
-        // 댓글 섹션 표시
-        commentsSection.classList.remove('hidden');
-        // 댓글 로드
-        if (!commentsSection.getAttribute('data-loaded')) {
-            fetchComments(postId);
-        }
-    } else {
-        // 댓글 섹션 숨기기
-        commentsSection.classList.add('hidden');
-    }
-}
-
-// 댓글 가져오기 함수
-function fetchComments(postId) {
-    fetch(`fetch_comments.jsp?post_id=${postId}`)
-        .then(response => response.text())
-        .then(text => {
-            try {
-                const data = JSON.parse(text);
-                if (data.status === 'success') {
-                    const commentList = document.getElementById(`comment-list-${postId}`);
-                    commentList.innerHTML = ''; // 기존 댓글 초기화
-                    data.comments.forEach(comment => {
-                        const commentItem = document.createElement('li');
-                        commentItem.innerHTML = `
-                            <div class="comment-header">
-                                <img src="circle.png" alt="프로필" class="profile-pic">
-                                <span>${escapeHtml(comment.userId)}</span>
-                            </div>
-                            <p>${escapeHtml(comment.commentText)}</p>
-                        `;
-                        commentList.appendChild(commentItem);
-                    });
-                    // 댓글 수 업데이트
-                    const commentCount = data.commentCount;
-                    const commentCountElement = document.querySelector(`#comments-section-${postId} .comment-count`);
-                    commentCountElement.textContent = `댓글 ${commentCount}`;
-                    // 데이터 로드 완료 표시
-                    commentsSection.setAttribute('data-loaded', 'true');
-                } else {
-                    alert(data.message);
-                }
-            } catch (e) {
-                console.error('JSON parsing error:', e);
-                alert('댓글을 가져오는 중 오류가 발생했습니다.');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching comments:', error);
-            alert('댓글을 가져오는 중 오류가 발생했습니다.');
-        });
-}
-
-// 댓글 추가 함수
-function addComment(postId) {
-    const commentInput = document.getElementById(`comment-input-${postId}`);
-    const commentText = commentInput.value.trim();
-
-    if (commentText === '') {
-        alert('댓글을 입력하세요.');
-        return;
-    }
-
-    const formData = new URLSearchParams();
-    formData.append('post_id', postId);
-    formData.append('comment_text', commentText);
-
-    fetch('add_comment.jsp', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: formData.toString(),
-    })
-    .then(response => response.text())
-    .then(text => {
-        try {
-            const data = JSON.parse(text);
-            if (data.status === 'success') {
-                // 새로운 댓글 추가
-                const commentList = document.getElementById(`comment-list-${postId}`);
-                const newComment = document.createElement('li');
-                newComment.innerHTML = `
-                    <div class="comment-header">
-                        <img src="circle.png" alt="프로필" class="profile-pic">
-                        <span>익명</span> <!-- 실제 사용자명 또는 익명 처리 필요 -->
-                    </div>
-                    <p>${escapeHtml(data.commentText)}</p>
-                `;
-                commentList.appendChild(newComment);
-                // 댓글 입력 초기화
-                commentInput.value = '';
-                // 댓글 수 업데이트
-                const commentCountElement = document.querySelector(`#comments-section-${postId} .comment-count`);
-                let currentCount = parseInt(commentCountElement.textContent.replace('댓글 ', '')) || 0;
-                commentCountElement.textContent = `댓글 ${currentCount + 1}`;
-            } else {
-                alert(data.message);
-            }
-        } catch (e) {
-            console.error('JSON parsing error:', e);
-            alert('댓글을 추가하는 중 오류가 발생했습니다.');
-        }
-    })
-    .catch(error => {
-        console.error('Error adding comment:', error);
-        alert('댓글을 추가하는 중 오류가 발생했습니다.');
-    });
-}
-
-// HTML 이스케이프 함수 (XSS 방지)
-function escapeHtml(text) {
-    const map = {
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#039;',
-    };
-    return text.replace(/[&<>"']/g, function(m) { return map[m]; });
-}
-
-// DOMContentLoaded 이벤트 리스너
 document.addEventListener('DOMContentLoaded', () => {
-    // 댓글 버튼 클릭 이벤트 리스너
-    const commentButtons = document.querySelectorAll('.comment-button');
-    commentButtons.forEach(button => {
-        button.addEventListener('click', (event) => {
+    // 댓글 버튼 클릭 이벤트
+    document.body.addEventListener('click', (event) => {
+        const button = event.target.closest('.comment-button');
+        if (button) {
             event.preventDefault();
             const postId = button.getAttribute('data-post-id');
             toggleComments(postId);
-        });
+        }
     });
 
-    // 댓글 추가 버튼 클릭 이벤트 리스너
-    const addCommentButtons = document.querySelectorAll('.add-comment-button');
-    addCommentButtons.forEach(button => {
-        button.addEventListener('click', () => {
+    // 댓글 추가 버튼 클릭 이벤트
+    document.body.addEventListener('click', (event) => {
+        const button = event.target.closest('.add-comment-button');
+        if (button) {
+            event.preventDefault();
             const postId = button.getAttribute('data-post-id');
-            addComment(postId);
-        });
+            const commentInput = document.querySelector(`#comment-input-${postId}`);
+            const commentText = commentInput.value.trim();
+
+            if (commentText === "") {
+                alert("댓글을 입력하세요.");
+                return;
+            }
+
+            fetch("add_comment.jsp", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: `post_id=${postId}&comment_text=${encodeURIComponent(commentText)}`,
+            })
+                .then((response) => response.json())
+                .then((data) => {
+                    if (data.status === "success") {
+                        const commentList = document.querySelector(`#comment-list-${postId}`);
+                        const newComment = document.createElement("li");
+                        newComment.innerHTML = `
+                            <div class="comment-header">
+                                <img src="circle.png" alt="프로필" class="profile-pic">
+                                <span>${data.comment.userId}</span>
+                                <span class="comment-date">${new Date(data.comment.commentDate).toLocaleString()}</span>
+                            </div>
+                            <p>${data.comment.commentText}</p>
+                        `;
+                        commentList.appendChild(newComment);
+                        commentInput.value = ""; // 입력 필드 초기화
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    alert("댓글 추가 중 오류가 발생했습니다.");
+                });
+        }
     });
 });
+
+document.addEventListener("click", (event) => {
+    const editLink = event.target.closest(".edit-comment");
+    const deleteLink = event.target.closest(".delete-comment");
+
+    if (editLink) {
+        event.preventDefault();
+        const commentId = editLink.getAttribute("data-comment-id");
+        const commentTextElement = document.getElementById(`comment-text-${commentId}`);
+        const currentText = commentTextElement.textContent;
+
+        // 수정 폼 생성
+        const inputField = document.createElement("textarea");
+        inputField.value = currentText;
+        inputField.className = "comment-edit-input";
+
+        const saveButton = document.createElement("button");
+        saveButton.textContent = "저장";
+        saveButton.className = "comment-save-button";
+
+        commentTextElement.replaceWith(inputField);
+        inputField.after(saveButton);
+    }
+});
+
