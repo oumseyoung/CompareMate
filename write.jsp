@@ -84,7 +84,7 @@
       <input type="date" id="end-date" name="endDate" value="">
       <input type="time" id="end-time" name="endTime" value="">
     </div>
-    <label><input type="checkbox" name="notify"> 투표 종료 전 알림 받음</label>
+    <label><input type="checkbox" name="notify"> 투표 종료 알림 받음</label>
             </div>
           </div>
 
