@@ -1,3 +1,5 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
   <head>
@@ -14,13 +16,13 @@
         type="button"
         id="sign"
         value="Sign in"
-        onclick="window.location.href='login.html';"
+        onclick="window.location.href='login.jsp';"
       />
       <input
         type="button"
         id="register"
         value="Register"
-        onclick="window.location.href='register.html';"
+        onclick="window.location.href='register.jsp';"
       />
     </div>
   </body>

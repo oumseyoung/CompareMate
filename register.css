@@ -1,3 +1,4 @@
+@charset "UTF-8";
 body {
   font-family: Arial, sans-serif;
   margin: 0;
@@ -63,7 +64,8 @@ input[type="password"] {
   width: 100%;
 }
 
-#bt {
+/* 중복확인 버튼 스타일 */
+#duplicate-check {
   padding: 10px;
   background: #ddead1;
   border: 1px solid #658354;
@@ -83,4 +85,5 @@ input[type="password"] {
   cursor: pointer;
   font-size: 18px;
   font-weight: bold;
+  margin-top: 10px;
 }
