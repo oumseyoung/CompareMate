@@ -1,0 +1,48 @@
+@charset "UTF-8";
+h1 {
+  font-style: normal;
+  font-weight: 700;
+  font-size: 60px;
+  line-height: 250px;
+  vertical-align: middle;
+  text-align: center;
+  letter-spacing: -0.03em;
+  color: #1e1e1e;
+  flex: none;
+  align-self: stretch; /* 새로 공간에 맞춰 늘어남 */
+  flex-grow: 0; /* 이건 가로 (늘어나지 않음) */
+}
+
+img {
+  margin-left: 10px;
+  margin-top: 10px;
+}
+.btn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 30px;
+  width: 50%;
+  margin: 0 auto;
+  flex: none;
+}
+#sign {
+  width: 120px;
+  height: 40px;
+  background: #ddead1;
+  border: 1px solid #658354;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#register {
+  width: 120px;
+  height: 40px;
+  background: #87ab69;
+  border: 1px solid #658354;
+  border-radius: 8px;
+  color: #f5f5f5;
+  cursor: pointer;
+}
